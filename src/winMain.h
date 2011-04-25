@@ -23,6 +23,10 @@
 #include "wx/statusbr.h"
 ////@end includes
 
+#include <vector>
+
+#include "CTrack.h"
+
 /*!
  * Forward declarations
  */
@@ -56,25 +60,25 @@ class wxStatusBar;
  */
 
 class winMain: public wxFrame
-{    
-    DECLARE_CLASS( winMain )
-    DECLARE_EVENT_TABLE()
+{
+	DECLARE_CLASS( winMain )
+	DECLARE_EVENT_TABLE()
 
 public:
-    /// Constructors
-    winMain();
-    winMain( wxWindow* parent, wxWindowID id = SYMBOL_WINMAIN_IDNAME, const wxString& caption = SYMBOL_WINMAIN_TITLE, const wxPoint& pos = SYMBOL_WINMAIN_POSITION, const wxSize& size = SYMBOL_WINMAIN_SIZE, long style = SYMBOL_WINMAIN_STYLE );
+	/// Constructors
+	winMain();
+	winMain( wxWindow* parent, wxWindowID id = SYMBOL_WINMAIN_IDNAME, const wxString& caption = SYMBOL_WINMAIN_TITLE, const wxPoint& pos = SYMBOL_WINMAIN_POSITION, const wxSize& size = SYMBOL_WINMAIN_SIZE, long style = SYMBOL_WINMAIN_STYLE );
 
-    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_WINMAIN_IDNAME, const wxString& caption = SYMBOL_WINMAIN_TITLE, const wxPoint& pos = SYMBOL_WINMAIN_POSITION, const wxSize& size = SYMBOL_WINMAIN_SIZE, long style = SYMBOL_WINMAIN_STYLE );
+	bool Create( wxWindow* parent, wxWindowID id = SYMBOL_WINMAIN_IDNAME, const wxString& caption = SYMBOL_WINMAIN_TITLE, const wxPoint& pos = SYMBOL_WINMAIN_POSITION, const wxSize& size = SYMBOL_WINMAIN_SIZE, long style = SYMBOL_WINMAIN_STYLE );
 
-    /// Destructor
-    ~winMain();
+	/// Destructor
+	~winMain();
 
-    /// Initialises member variables
-    void Init();
+	/// Initialises member variables
+	void Init();
 
-    /// Creates the controls and sizers
-    void CreateControls();
+	/// Creates the controls and sizers
+	void CreateControls();
 
 ////@begin winMain event handler declarations
 
@@ -98,8 +102,8 @@ public:
 	wxIcon GetIconResource( const wxString& name );
 ////@end winMain member function declarations
 
-    /// Should we show tooltips?
-    static bool ShowToolTips();
+	/// Should we show tooltips?
+	static bool ShowToolTips();
 
 ////@begin winMain member variables
 	wxListBox* trackList;
@@ -108,6 +112,9 @@ public:
 	wxStaticBitmap* imgSpeedplot;
 	wxStatusBar* statusBar;
 ////@end winMain member variables
+
+	/// Track data store
+	std::vector<CTrack> trackData;
 };
 
 #endif

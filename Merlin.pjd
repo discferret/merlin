@@ -968,12 +968,12 @@
                 <string name="proxy-type">"wbSubmenuProxy"</string>
                 <string name="proxy-Id name">"ID_MENU"</string>
                 <long name="proxy-Id value">10005</long>
-                <string name="proxy-Label">"Open"</string>
+                <string name="proxy-Label">"&amp;Open"</string>
                 <string name="proxy-Help text">""</string>
                 <bool name="proxy-Enabled">1</bool>
                 <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
                 <document>
-                  <string name="title">"Catweasel IMG: ID_FILEOPEN_CATWEASEL_IMG"</string>
+                  <string name="title">"Catweasel &amp;IMG: ID_FILEOPEN_CATWEASEL_IMG"</string>
                   <string name="type">"dialog-control-document"</string>
                   <string name="filename">""</string>
                   <string name="icon-name">"menuitem"</string>
@@ -985,7 +985,7 @@
                   <string name="event-handler-0">"wxEVT_COMMAND_MENU_SELECTED|OnFileOpenCatweaselIMGClick|NONE||winMain"</string>
                   <string name="proxy-Id name">"ID_FILEOPEN_CATWEASEL_IMG"</string>
                   <long name="proxy-Id value">10006</long>
-                  <string name="proxy-Label">"Catweasel IMG"</string>
+                  <string name="proxy-Label">"Catweasel &amp;IMG"</string>
                   <string name="proxy-Kind">"Normal"</string>
                   <bool name="proxy-Checked">0</bool>
                   <bool name="proxy-Enabled">1</bool>

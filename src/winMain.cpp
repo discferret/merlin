@@ -25,13 +25,18 @@
 
 #include "wx/aboutdlg.h"
 
-#include "CTrack.h"
+#include <iostream>
+#include <fstream>
+#include <exception>
+#include <cstdint>
 
+#include "CTrack.h"
 #include "winMain.h"
 
 ////@begin XPM images
 ////@end XPM images
 
+using namespace std;
 
 /*
  * winMain type definition
@@ -181,8 +186,8 @@ void winMain::CreateControls()
 	wxMenuBar* menuBar = new wxMenuBar;
 	wxMenu* itemMenu14 = new wxMenu;
 	wxMenu* itemMenu15 = new wxMenu;
-	itemMenu15->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel IMG"), wxEmptyString, wxITEM_NORMAL);
-	itemMenu14->Append(ID_MENU, _("Open"), itemMenu15);
+	itemMenu15->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
+	itemMenu14->Append(ID_MENU, _("&Open"), itemMenu15);
 	itemMenu14->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
 	menuBar->Append(itemMenu14, _("&File"));
 	wxMenu* itemMenu18 = new wxMenu;
@@ -243,7 +248,7 @@ bool winMain::ShowToolTips()
 
 wxBitmap winMain::GetBitmapResource( const wxString& name )
 {
-    // Bitmap retrieval
+	// Bitmap retrieval
 ////@begin winMain bitmap retrieval
 	wxUnusedVar(name);
 	return wxNullBitmap;
@@ -256,7 +261,7 @@ wxBitmap winMain::GetBitmapResource( const wxString& name )
 
 wxIcon winMain::GetIconResource( const wxString& name )
 {
-    // Icon retrieval
+	// Icon retrieval
 ////@begin winMain icon retrieval
 	wxUnusedVar(name);
 	if (name == _T("discferret-notext32.png"))
@@ -310,23 +315,96 @@ void winMain::OnHelpAbout( wxCommandEvent& event )
 
 void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 {
+	ifstream file;
+
 	wxFileDialog* OpenDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString, 
-		_("Catweasel IMG files (*.img)|*.img"),
+		_("Catweasel IMG files (*.img)|*.img|All files (*.*)|*.*"),
 		wxFD_OPEN, wxDefaultPosition);
- 
-	// Creates a "open file" dialog with 4 file types
-	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "Cancel"
-	{
-		wxString CurrentDocPath = OpenDialog->GetPath();
-		// Sets our current document to the file the user selected
-//		MainEditBox->LoadFile(CurrentDocPath); //Opens that file
 
-		// Set the Title to reflect the file open
-		SetTitle(wxString(wxT("Merlin - ")) << OpenDialog->GetFilename());
-
+	if (OpenDialog->ShowModal() != wxID_OK) {
+		// User didn't click OK, bail out.
+		OpenDialog->Destroy();
+		return;
 	}
- 
+
+	// If we reach this point, the user selected a file. Load it.
+	trackData.clear();
+	try {
+		// Data buffer
+		uint8_t buf[4];
+		// File length
+		streampos filelen;
+
+		// Open the file
+		file.exceptions(ifstream::failbit | ifstream::badbit);
+		file.open(OpenDialog->GetPath().char_str(), ios::in | ios::binary);
+
+		// Get the file length
+		file.seekg (0, ios::end);
+		filelen = file.tellg();
+		file.seekg (0, ios::beg);
+
+		// Read each track in turn
+		while (file.tellg() < filelen) {
+			uint8_t cyl, head;
+			uint32_t plen;
+
+			// Read Cyl/head address
+			file.read((char *)&cyl, 1);
+			file.read((char *)&head, 1);
+
+			// Read payload length
+			file.read((char *)&buf, 4);
+			plen = ((uint32_t)buf[0]) +
+				(((uint32_t)buf[1]) << 8) +
+				(((uint32_t)buf[2]) << 16) +
+				(((uint32_t)buf[3]) << 24);
+
+			// Make sure the payload address is sane
+			if (plen > (filelen - file.tellg()))
+				throw exception();
+
+			cout << "chs " << (int)cyl << "/" << (int)head << ", plen=" << plen << endl;
+
+			// read data into a buffer
+			uint8_t *tbuf = new uint8_t[plen];
+			file.read((char *)tbuf, plen);
+
+			// create a new track from the data we have
+			// Note that Catweasel data consists of raw timing values. The MSbit is the
+			// INDEX flag; the remainder are used to store the timing value.
+			CTrack tk(cyl, head, -1);
+			for (streampos i=0; i<plen; i+=1)
+				tk.data.push_back(tbuf[plen] & 0x7f);
+
+			// Store track data
+			trackData.push_back(tk);
+
+			// Deallocate memory buffer
+			delete tbuf;
+		}
+
+		// File read complete; close the file
+		file.close();
+	} catch (ifstream::failure &e) {
+		// TODO: display error message
+		cerr << "Whoa! Error reading file! e.what = '" << e.what() << "'; ";
+		cerr << "status: " << file.rdstate() << " [";
+		if ((file.rdstate() & ifstream::eofbit)  != 0) cerr << "eof ";
+		if ((file.rdstate() & ifstream::failbit) != 0) cerr << "fail ";
+		if ((file.rdstate() & ifstream::badbit)  != 0) cerr << "bad ";
+		if ((file.rdstate() & ifstream::goodbit) != 0) cerr << "good ";
+		cerr << "]" << endl;
+	} catch (std::exception &e) {
+		cerr << "Payload length is insane, or something else went wrong...!" << endl;
+	}
+
+	// Set the Title to reflect the file open
+	SetTitle(wxString(wxT("Merlin - ")) << OpenDialog->GetFilename());
+
+	// Update the track list box and select the first track
+
 	// Clean up after ourselves
 	OpenDialog->Destroy();
 }
