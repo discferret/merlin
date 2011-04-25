@@ -15,7 +15,7 @@ CONFIG=debug
 ifeq ($(CONFIG),debug)
 WXWIN=/home/philpem/dev/_wx/wxWidgets-2.8.12
 TOOLCHAINNAME=gtk2d
-WXVERSION:=$(shell echo `$(WXWIN)/GCCBuildDebugGTK2/wx-config --version`)
+WXVERSION:=$(shell echo `wx-config --version`)
 CXX=g++
 LINKER=g++
 CC=gcc
@@ -27,13 +27,13 @@ OUTPUTPATH=GCCDebug
 OBJECTPATH=GCCDebug
 BUILDPATHS=$(OBJECTPATH)
 PROGRAM=Merlin
-LIBS=$(shell $(WXWIN)/GCCBuildDebugGTK2/wx-config --inplace --exec-prefix="$(WXWIN)/GCCBuildDebugGTK2" --libs std --cxxflags)
+LIBS=$(shell wx-config --libs std --cxxflags)
 LINKERFLAGS=
 WARNINGFLAGS=-Wall -Wno-write-strings
 OPTFLAGS=-O0
 DEBUGFLAGS=-ggdb
 LIBPATH=
-CPPINC:=$(shell $(WXWIN)/GCCBuildDebugGTK2/wx-config --inplace --cxxflags)
+CPPINC:=$(shell wx-config --cxxflags)
 GCCFLAGS=
 LDFLAGS=$(LIBS) $(LIBPATH) $(LINKERFLAGS)
 CPPFLAGS=$(CPPINC) $(GCCFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) $(WARNINGFLAGS)
@@ -46,7 +46,7 @@ else
 ifeq ($(CONFIG),release)
 WXWIN=/home/philpem/dev/_wx/wxWidgets-2.8.12
 TOOLCHAINNAME=gtk2
-WXVERSION:=$(shell echo `$(WXWIN)/GCCBuildReleaseGTK2/wx-config --version`)
+WXVERSION:=$(shell echo `wx-config --version`)
 CXX=g++
 LINKER=g++
 CC=gcc
@@ -58,13 +58,13 @@ OUTPUTPATH=GCCRelease
 OBJECTPATH=GCCRelease
 BUILDPATHS=$(OBJECTPATH)
 PROGRAM=Merlin
-LIBS=$(shell $(WXWIN)/GCCBuildReleaseGTK2/wx-config --inplace --exec-prefix="$(WXWIN)/GCCBuildReleaseGTK2" --libs std --cxxflags)
+LIBS=$(shell wx-config --libs std --cxxflags)
 LINKERFLAGS=
 WARNINGFLAGS=-Wall -Wno-write-strings
 OPTFLAGS=-O2
 DEBUGFLAGS=
 LIBPATH=
-CPPINC:=$(shell $(WXWIN)/GCCBuildReleaseGTK2/wx-config --inplace --cxxflags)
+CPPINC:=$(shell wx-config --cxxflags)
 GCCFLAGS=
 LDFLAGS=$(LIBS) $(LIBPATH) $(LINKERFLAGS)
 CPPFLAGS=$(CPPINC) $(GCCFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) $(WARNINGFLAGS)
@@ -77,7 +77,7 @@ else
 ifeq ($(CONFIG),unicodedebug)
 WXWIN=/home/philpem/dev/_wx/wxWidgets-2.8.12
 TOOLCHAINNAME=gtk2ud
-WXVERSION:=$(shell echo `$(WXWIN)/GCCBuildDebugGTK2Unicode/wx-config --version`)
+WXVERSION:=$(shell echo `wx-config --version`)
 CXX=g++
 LINKER=g++
 CC=gcc
@@ -89,13 +89,13 @@ OUTPUTPATH=GCCUnicodeDebug
 OBJECTPATH=GCCUnicodeDebug
 BUILDPATHS=$(OBJECTPATH)
 PROGRAM=Merlin
-LIBS=$(shell $(WXWIN)/GCCBuildDebugGTK2Unicode/wx-config --inplace --exec-prefix="$(WXWIN)/GCCBuildDebugGTK2Unicode" --libs std --cxxflags)
+LIBS=$(shell wx-config --libs std --cxxflags)
 LINKERFLAGS=
 WARNINGFLAGS=-Wall -Wno-write-strings
 OPTFLAGS=-O0
 DEBUGFLAGS=-ggdb
 LIBPATH=
-CPPINC:=$(shell $(WXWIN)/GCCBuildDebugGTK2Unicode/wx-config --inplace --cxxflags)
+CPPINC:=$(shell wx-config --cxxflags)
 GCCFLAGS=
 LDFLAGS=$(LIBS) $(LIBPATH) $(LINKERFLAGS)
 CPPFLAGS=$(CPPINC) $(GCCFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) $(WARNINGFLAGS)
@@ -107,7 +107,7 @@ MACPACKAGEINFO=
 else
 WXWIN=/home/philpem/dev/_wx/wxWidgets-2.8.12
 TOOLCHAINNAME=gtk2u
-WXVERSION:=$(shell echo `$(WXWIN)/GCCBuildReleaseGTK2Unicode/wx-config --version`)
+WXVERSION:=$(shell echo `wx-config --version`)
 CXX=g++
 LINKER=g++
 CC=gcc
@@ -119,13 +119,13 @@ OUTPUTPATH=GCCUnicodeRelease
 OBJECTPATH=GCCUnicodeRelease
 BUILDPATHS=$(OBJECTPATH)
 PROGRAM=Merlin
-LIBS=$(shell $(WXWIN)/GCCBuildReleaseGTK2Unicode/wx-config --inplace --exec-prefix="$(WXWIN)/GCCBuildReleaseGTK2Unicode" --libs std --cxxflags)
+LIBS=$(shell wx-config --libs std --cxxflags)
 LINKERFLAGS=
 WARNINGFLAGS=-Wall -Wno-write-strings
 OPTFLAGS=-O2
 DEBUGFLAGS=
 LIBPATH=
-CPPINC:=$(shell $(WXWIN)/GCCBuildReleaseGTK2Unicode/wx-config --inplace --cxxflags)
+CPPINC:=$(shell wx-config --cxxflags)
 GCCFLAGS=
 LDFLAGS=$(LIBS) $(LIBPATH) $(LINKERFLAGS)
 CPPFLAGS=$(CPPINC) $(GCCFLAGS) $(DEBUGFLAGS) $(OPTFLAGS) $(WARNINGFLAGS)
