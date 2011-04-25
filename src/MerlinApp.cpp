@@ -23,7 +23,7 @@
 ////@begin includes
 ////@end includes
 
-#include "../inc/MerlinApp.h"
+#include "MerlinApp.h"
 
 ////@begin XPM images
 ////@end XPM images

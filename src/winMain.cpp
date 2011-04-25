@@ -25,7 +25,7 @@
 
 #include "wx/aboutdlg.h"
 
-#include "../inc/winMain.h"
+#include "winMain.h"
 
 ////@begin XPM images
 ////@end XPM images
