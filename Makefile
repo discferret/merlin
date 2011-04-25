@@ -115,7 +115,7 @@ BUILD_TYPE	?=	debug
 TARGET		=	merlin
 
 # source files that produce object files
-SRC			=	MerlinApp.cpp winMain.cpp
+SRC			=	MerlinApp.cpp winMain.cpp CTrack.cpp
 
 # source type - either "c" or "cpp" (C or C++)
 SRC_TYPE	=	cpp

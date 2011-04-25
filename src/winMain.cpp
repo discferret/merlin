@@ -25,6 +25,8 @@
 
 #include "wx/aboutdlg.h"
 
+#include "CTrack.h"
+
 #include "winMain.h"
 
 ////@begin XPM images
