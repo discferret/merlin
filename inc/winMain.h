@@ -78,35 +78,35 @@ public:
 
 ////@begin winMain event handler declarations
 
-    /// wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
-    void OnFileOpenCatweaselIMGClick( wxCommandEvent& event );
+	/// wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
+	void OnFileOpenCatweaselIMGClick( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_EXIT
-    void OnEXITClick( wxCommandEvent& event );
+	/// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_EXIT
+	void OnEXITClick( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_ABOUT
-    void OnHelpAbout( wxCommandEvent& event );
+	/// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_ABOUT
+	void OnHelpAbout( wxCommandEvent& event );
 
 ////@end winMain event handler declarations
 
 ////@begin winMain member function declarations
 
-    /// Retrieves bitmap resources
-    wxBitmap GetBitmapResource( const wxString& name );
+	/// Retrieves bitmap resources
+	wxBitmap GetBitmapResource( const wxString& name );
 
-    /// Retrieves icon resources
-    wxIcon GetIconResource( const wxString& name );
+	/// Retrieves icon resources
+	wxIcon GetIconResource( const wxString& name );
 ////@end winMain member function declarations
 
     /// Should we show tooltips?
     static bool ShowToolTips();
 
 ////@begin winMain member variables
-    wxListBox* trackList;
-    wxStaticBitmap* imgHistogram;
-    wxStaticBitmap* imgScatter;
-    wxStaticBitmap* imgSpeedplot;
-    wxStatusBar* statusBar;
+	wxListBox* trackList;
+	wxStaticBitmap* imgHistogram;
+	wxStaticBitmap* imgScatter;
+	wxStaticBitmap* imgSpeedplot;
+	wxStatusBar* statusBar;
 ////@end winMain member variables
 };
 
