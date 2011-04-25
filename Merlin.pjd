@@ -264,7 +264,7 @@
           <string name="proxy-Implementation filename">"src/winMain.cpp"</string>
           <string name="proxy-Header filename">"src/winMain.h"</string>
           <string name="proxy-XRC filename">""</string>
-          <string name="proxy-Title">"Merlin betatest 0.1df0"</string>
+          <string name="proxy-Title">"Merlin"</string>
           <bool name="proxy-Centre">1</bool>
           <string name="proxy-Icon">"discferret-notext32.png"</string>
           <bool name="proxy-Dialog units">0</bool>

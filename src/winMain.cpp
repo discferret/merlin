@@ -31,6 +31,7 @@
 #include <cstdint>
 
 #include "CTrack.h"
+#include "version.h"
 #include "winMain.h"
 
 ////@begin XPM images
@@ -294,8 +295,8 @@ void winMain::OnEXITClick( wxCommandEvent& event )
 void winMain::OnHelpAbout( wxCommandEvent& event )
 {
 	wxAboutDialogInfo info;
-	info.SetName(_("MagDAS II Plus"));
-	info.SetVersion(_("0.0.1 alpha 1"));
+	info.SetName(_("Merlin"));
+	info.SetVersion(_(VER_FULLSTR));
 	info.SetDescription(_("Analysis tool for magnetic transition images."));
 	info.SetCopyright(wxT("(C) 2011 Philip Pemberton t/a Red Fox Engineering. All rights reserved."));
 	info.SetLicense(wxT("Internal beta release, do not distribute!"));
