@@ -20,7 +20,6 @@
 ////@begin includes
 #include "wx/frame.h"
 #include "wx/splitter.h"
-#include "wx/notebook.h"
 #include "wx/statusbr.h"
 ////@end includes
 
@@ -40,12 +39,14 @@ class wxStatusBar;
 #define ID_WINMAIN 10000
 #define ID_SPLITTERWINDOW 10002
 #define ID_TRACKLIST 10001
-#define ID_NOTEBOOK 10004
+#define ID_PANEL 10007
 #define ID_STATUSBAR 10003
+#define ID_MENU 10005
+#define ID_FILEOPEN_CATWEASEL_IMG 10006
 #define SYMBOL_WINMAIN_STYLE wxDEFAULT_FRAME_STYLE|wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxMINIMIZE_BOX|wxMAXIMIZE_BOX|wxCLOSE_BOX|wxFULL_REPAINT_ON_RESIZE
 #define SYMBOL_WINMAIN_TITLE _("Merlin betatest 0.1df0")
 #define SYMBOL_WINMAIN_IDNAME ID_WINMAIN
-#define SYMBOL_WINMAIN_SIZE wxSize(800, 500)
+#define SYMBOL_WINMAIN_SIZE wxSize(800, 570)
 #define SYMBOL_WINMAIN_POSITION wxDefaultPosition
 ////@end control identifiers
 
@@ -77,6 +78,15 @@ public:
 
 ////@begin winMain event handler declarations
 
+    /// wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
+    void OnFileOpenCatweaselIMGClick( wxCommandEvent& event );
+
+    /// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_EXIT
+    void OnEXITClick( wxCommandEvent& event );
+
+    /// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_ABOUT
+    void OnHelpAbout( wxCommandEvent& event );
+
 ////@end winMain event handler declarations
 
 ////@begin winMain member function declarations
@@ -93,6 +103,9 @@ public:
 
 ////@begin winMain member variables
     wxListBox* trackList;
+    wxStaticBitmap* imgHistogram;
+    wxStaticBitmap* imgScatter;
+    wxStaticBitmap* imgSpeedplot;
     wxStatusBar* statusBar;
 ////@end winMain member variables
 };
