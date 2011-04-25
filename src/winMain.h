@@ -115,6 +115,9 @@ public:
 
 	/// Track data store
 	std::vector<CTrack> trackData;
+
+	/// Update track list from trackData vector
+	void UpdateTrackList(void);
 };
 
 #endif

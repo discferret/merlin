@@ -310,6 +310,34 @@ void winMain::OnHelpAbout( wxCommandEvent& event )
 }
 
 
+/**
+ * Update the track list box from the track data vector.
+ */
+void winMain::UpdateTrackList(void)
+{
+	// Clear the list
+	trackList->Clear();
+
+	// Copy track ID strings from the trackdata vector
+	for (vector<CTrack>::const_iterator i = trackData.begin(); i != trackData.end(); i++) {
+		wxString st;
+		if ((*i).sector() > 0)
+			st = wxString::Format(wxT("%d:%d.%d [%d samples]"), (*i).cylinder(), (*i).head(), (*i).sector(), (*i).data.size());
+		else
+			st = wxString::Format(wxT("%d:%d [%d samples]"), (*i).cylinder(), (*i).head(), (*i).data.size());
+
+		trackList->Append(st);
+	}
+
+	if (trackList->IsEmpty())
+		// Select nothing if the list is empty
+		trackList->SetSelection(wxNOT_FOUND);
+	else
+		// Otherwise select the first item
+		trackList->SetSelection(0);
+}
+
+
 /*
  * wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
  */
@@ -317,6 +345,7 @@ void winMain::OnHelpAbout( wxCommandEvent& event )
 void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 {
 	ifstream file;
+	bool success = true;
 
 	wxFileDialog* OpenDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString, 
@@ -366,8 +395,6 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 			if (plen > (filelen - file.tellg()))
 				throw exception();
 
-			cout << "chs " << (int)cyl << "/" << (int)head << ", plen=" << plen << endl;
-
 			// read data into a buffer
 			uint8_t *tbuf = new uint8_t[plen];
 			file.read((char *)tbuf, plen);
@@ -389,22 +416,48 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 		// File read complete; close the file
 		file.close();
 	} catch (ifstream::failure &e) {
-		// TODO: display error message
-		cerr << "Whoa! Error reading file! e.what = '" << e.what() << "'; ";
-		cerr << "status: " << file.rdstate() << " [";
-		if ((file.rdstate() & ifstream::eofbit)  != 0) cerr << "eof ";
-		if ((file.rdstate() & ifstream::failbit) != 0) cerr << "fail ";
-		if ((file.rdstate() & ifstream::badbit)  != 0) cerr << "bad ";
-		if ((file.rdstate() & ifstream::goodbit) != 0) cerr << "good ";
-		cerr << "]" << endl;
+		// File read error. Let the user know what happened.
+		wxString st = _("An error occurred while reading the file '");
+		st << OpenDialog->GetFilename();
+		st << wxT("': ");
+
+		if ((file.rdstate() & ifstream::eofbit)) st << _("Unexpected end of file.");
+		else if ((file.rdstate() & ifstream::badbit)) st << _("Unknown file read error (disc error?).");
+		else st << _("Unknown error.");		// FIXME? can this happen?
+
+		wxMessageBox(
+				st,
+				_("File read error"),
+				wxICON_ERROR | wxOK,
+				this);
+
+		success = false;
 	} catch (std::exception &e) {
-		cerr << "Payload length is insane, or something else went wrong...!" << endl;
+		wxString st = _("An error occurred while reading the file '");
+		st << OpenDialog->GetFilename();
+		st << wxT("': ");
+		st << _("Payload length extends past EOF");
+		wxMessageBox(
+				st,
+				_("File read error"),
+				wxICON_ERROR | wxOK,
+				this);
+
+		success = false;
 	}
 
-	// Set the Title to reflect the file open
-	SetTitle(wxString(wxT("Merlin - ")) << OpenDialog->GetFilename());
+	if (!success) {
+		// Something rotten in Denmark. Clear the trackdata buffer and remove the
+		// filename from the title bar.
+		trackData.clear();
+		SetTitle(wxString(wxT("Merlin")));
+	} else {
+		// Set the window title to reflect the file open
+		SetTitle(wxString(wxT("Merlin - ")) << OpenDialog->GetFilename());
+	}
 
 	// Update the track list box and select the first track
+	UpdateTrackList();
 
 	// Clean up after ourselves
 	OpenDialog->Destroy();
