@@ -25,6 +25,12 @@
 
 #include "wx/aboutdlg.h"
 
+#include "wx/xy/xyplot.h"
+#include "wx/xy/xysimpledataset.h"
+#include "wx/xy/xylinerenderer.h"
+#include "wx/chart.h"
+#include "wx/chartpanel.h"
+
 #include <iostream>
 #include <fstream>
 #include <exception>
@@ -138,7 +144,7 @@ bool winMain::Create( wxWindow* parent, wxWindowID id, const wxString& caption, 
 	quips.Add(wxT("I don't think this is a natural occurrence, Max. In fact, I think we're witnessing a celestial convergence of some sort.")); // Sam & Max
 	quips.Add(wxT("I'm sure this thing is somehow useful, but I'll be damned if I know how."));	// Sam and Max Hit The Road
 	quips.Add(wxT("I'm thinking of a number between one and ten, and... I don't know why."));	// Sam and Max Hit The Road
-	quips.Add(wxT("Looks to me like a margionally vulnerable hostage situation!"));				// Sam and Max Hit The Road
+	quips.Add(wxT("Looks to me like a marginally vulnerable hostage situation!"));				// Sam and Max Hit The Road
 
 	// Now we seed the RNG and pick a random quip
 	srand(time(NULL));
@@ -169,9 +175,9 @@ void winMain::Init()
 {
 ////@begin winMain member initialisation
 	trackList = NULL;
-	imgHistogram = NULL;
-	imgScatter = NULL;
-	imgSpeedplot = NULL;
+	histogramPanel = NULL;
+	histogramSizer = NULL;
+	wxp2 = NULL;
 	statusBar = NULL;
 ////@end winMain member initialisation
 }
@@ -187,15 +193,15 @@ void winMain::CreateControls()
 	winMain* itemFrame1 = this;
 
 	wxMenuBar* menuBar = new wxMenuBar;
-	wxMenu* itemMenu14 = new wxMenu;
 	wxMenu* itemMenu15 = new wxMenu;
-	itemMenu15->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
-	itemMenu14->Append(ID_MENU, _("&Open"), itemMenu15);
-	itemMenu14->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
-	menuBar->Append(itemMenu14, _("&File"));
-	wxMenu* itemMenu18 = new wxMenu;
-	itemMenu18->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
-	menuBar->Append(itemMenu18, _("Help"));
+	wxMenu* itemMenu16 = new wxMenu;
+	itemMenu16->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
+	itemMenu15->Append(ID_MENU, _("&Open"), itemMenu16);
+	itemMenu15->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
+	menuBar->Append(itemMenu15, _("&File"));
+	wxMenu* itemMenu19 = new wxMenu;
+	itemMenu19->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
+	menuBar->Append(itemMenu19, _("Help"));
 	itemFrame1->SetMenuBar(menuBar);
 
 	wxSplitterWindow* itemSplitterWindow2 = new wxSplitterWindow( itemFrame1, ID_SPLITTERWINDOW, wxDefaultPosition, wxSize(100, 100), wxSP_3DBORDER|wxSP_3DSASH|wxSP_LIVE_UPDATE );
@@ -211,20 +217,22 @@ void winMain::CreateControls()
 	wxStaticBox* itemStaticBoxSizer6Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Histogram"));
 	wxStaticBoxSizer* itemStaticBoxSizer6 = new wxStaticBoxSizer(itemStaticBoxSizer6Static, wxHORIZONTAL);
 	itemBoxSizer5->Add(itemStaticBoxSizer6, 1, wxGROW|wxALL, 5);
-	imgHistogram = new wxStaticBitmap( itemPanel4, wxID_STATIC, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	itemStaticBoxSizer6->Add(imgHistogram, 1, wxGROW|wxALL, 5);
+	histogramPanel = new wxPanel( itemPanel4, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTAB_TRAVERSAL );
+	itemStaticBoxSizer6->Add(histogramPanel, 1, wxGROW|wxALL, 0);
+	histogramSizer = new wxBoxSizer(wxHORIZONTAL);
+	histogramPanel->SetSizer(histogramSizer);
 
-	wxStaticBox* itemStaticBoxSizer8Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Scatter"));
-	wxStaticBoxSizer* itemStaticBoxSizer8 = new wxStaticBoxSizer(itemStaticBoxSizer8Static, wxHORIZONTAL);
-	itemBoxSizer5->Add(itemStaticBoxSizer8, 1, wxGROW|wxALL, 5);
-	imgScatter = new wxStaticBitmap( itemPanel4, wxID_STATIC, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	itemStaticBoxSizer8->Add(imgScatter, 1, wxGROW|wxALL, 5);
+	wxStaticBox* itemStaticBoxSizer9Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Scatter"));
+	wxStaticBoxSizer* itemStaticBoxSizer9 = new wxStaticBoxSizer(itemStaticBoxSizer9Static, wxHORIZONTAL);
+	itemBoxSizer5->Add(itemStaticBoxSizer9, 1, wxGROW|wxALL, 5);
+	wxp2 = new wxPanel( itemPanel4, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
+	itemStaticBoxSizer9->Add(wxp2, 1, wxGROW|wxALL, 5);
 
-	wxStaticBox* itemStaticBoxSizer10Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Speed graph"));
-	wxStaticBoxSizer* itemStaticBoxSizer10 = new wxStaticBoxSizer(itemStaticBoxSizer10Static, wxHORIZONTAL);
-	itemBoxSizer5->Add(itemStaticBoxSizer10, 1, wxGROW|wxALL, 5);
-	imgSpeedplot = new wxStaticBitmap( itemPanel4, wxID_STATIC, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	itemStaticBoxSizer10->Add(imgSpeedplot, 1, wxGROW|wxALL, 5);
+	wxStaticBox* itemStaticBoxSizer11Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Speed graph"));
+	wxStaticBoxSizer* itemStaticBoxSizer11 = new wxStaticBoxSizer(itemStaticBoxSizer11Static, wxHORIZONTAL);
+	itemBoxSizer5->Add(itemStaticBoxSizer11, 1, wxGROW|wxALL, 5);
+	wxPanel* itemPanel12 = new wxPanel( itemPanel4, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
+	itemStaticBoxSizer11->Add(itemPanel12, 1, wxGROW|wxALL, 5);
 
 	itemSplitterWindow2->SplitVertically(trackList, itemPanel4, 300);
 
@@ -472,13 +480,90 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 
 void winMain::OnTrackSelected( wxCommandEvent& event )
 {
+#if 0
 	wxString st = _("Listbox item selected: ");
 	st << trackList->GetStringSelection();
-	wxMessageBox(st, _("Debug info"), wxOK | wxICON_INFORMATION, this);
+//	wxMessageBox(st, _("Debug info"), wxOK | wxICON_INFORMATION, this);
 
+	double data[][2] = {
+		{ 10, 20, },
+		{ 13, 16, },
+		{ 7, 30, },
+		{ 15, 34, },
+		{ 25, 4, }
+	};
+
+	// create plot
+	XYPlot *plot = new XYPlot();
+	// create dataset
+	XYSimpleDataset *dataset = new XYSimpleDataset();
+	// add a new series with our data
+	dataset->AddSerie((double *)data, WXSIZEOF(data));
+	// set renderer (line renderer)
+	dataset->SetRenderer(new XYLineRenderer());
+	// create number axes on left and bottom
+	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
+	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
+	leftAxis->SetTitle(wxT("X Axis"));
+	bottomAxis->SetTitle(wxT("Y Axis"));
+	// put it all together
+	plot->AddDataset(dataset);
+	plot->AddAxis(leftAxis);
+	plot->AddAxis(bottomAxis);
+	// link data with axis
+	plot->LinkDataVerticalAxis(0,0);
+	plot->LinkDataHorizontalAxis(0,0);
+	// create a chart named "simple xy demo"
+	Chart *chart = new Chart(plot, wxT("Simple XY demo"));
+	wxChartPanel *chartPanel = new wxChartPanel(this);
+	chartPanel->SetChart(chart);
+//	histogramSizer->Add(chartPanel, 1, wxEXPAND);
+	//	, wxID_ANY, chart, wxPoint(0, 0), wxSize(400, 400));
+#endif
+
+    double data[][2] = {
+        { 10, 20, },
+        { 13, 16, },
+        { 7, 30, },
+        { 15, 34, },
+        { 25, 4, }
+    };
+
+    // create plot
+    XYPlot *plot = new XYPlot();
+    // create dataset
+    XYSimpleDataset *dataset = new XYSimpleDataset();
+    // add a new series with our data
+    dataset->AddSerie((double *)data, WXSIZEOF(data));
+    // set renderer (line renderer)
+    dataset->SetRenderer(new XYLineRenderer());
+    // create number axes on left and bottom
+    NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
+    NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
+    leftAxis->SetTitle(wxT("X Axis"));
+    bottomAxis->SetTitle(wxT("Y Axis"));
+    // put it all together
+    plot->AddDataset(dataset);
+    plot->AddAxis(leftAxis);
+    plot->AddAxis(bottomAxis);
+    // link data with axis
+    plot->LinkDataVerticalAxis(0,0);
+    plot->LinkDataHorizontalAxis(0,0);
+    // create a chart named "simple xy demo"
+    Chart *chart = new Chart(plot, wxT("Simple XY demo"));
+    wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize); //wxPoint(0, 0), wxSize(400, 400));
+//    histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
+	histogramSizer->Clear();
+	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
+	histogramSizer->Layout();
+    chartPanel->SetChart(chart);
+
+
+#if 0
 ////@begin wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST in winMain.
 	// Before editing this code, remove the block markers.
 	event.Skip();
 ////@end wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST in winMain. 
+#endif
 }
 

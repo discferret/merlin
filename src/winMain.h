@@ -32,6 +32,7 @@
  */
 
 ////@begin forward declarations
+class wxBoxSizer;
 class wxStatusBar;
 ////@end forward declarations
 
@@ -44,6 +45,9 @@ class wxStatusBar;
 #define ID_SPLITTERWINDOW 10002
 #define ID_TRACKLIST 10001
 #define ID_PANEL 10007
+#define ID_PANEL3 10010
+#define ID_PANEL2 10009
+#define ID_PANEL1 10008
 #define ID_STATUSBAR 10003
 #define ID_MENU 10005
 #define ID_FILEOPEN_CATWEASEL_IMG 10006
@@ -110,9 +114,9 @@ public:
 
 ////@begin winMain member variables
 	wxListBox* trackList;
-	wxStaticBitmap* imgHistogram;
-	wxStaticBitmap* imgScatter;
-	wxStaticBitmap* imgSpeedplot;
+	wxPanel* histogramPanel;
+	wxBoxSizer* histogramSizer;
+	wxPanel* wxp2;
 	wxStatusBar* statusBar;
 ////@end winMain member variables
 
