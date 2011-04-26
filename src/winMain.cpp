@@ -364,31 +364,56 @@ void winMain::UpdateGraphs(void)
 	if (trackList->GetSelection() == wxNOT_FOUND)
 		return;
 
-	// First pass: find the maximum value of the data in the trackarray
 	CTrack t = trackData[trackList->GetSelection()];
+
+	double *scatterData, *histData;
 	unsigned long maxval = 0;
-	for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
-		if ((*i) > maxval) maxval = *i;
+	unsigned long scatterlen = 0;
 
-	// Make sure we allocate enough data bins -- if maxval == 0, then we still
-	// need a bin for all the zero values.
-	maxval++;
+	// Make sure there's actually some track data here...
+	if (t.data.size() == 0) {
+		// Hmm. Nope. Clear the histogram and scatter data.
+		maxval = scatterlen = 1;
+		scatterData = new double[2];
+		histData = new double[2];
+		scatterData[0] = scatterData[1] = 0;
+		histData[0] = histData[1] = 0;
+	} else {
+		// First pass: find the maximum value of the data in the trackarray
+		// Also produces the data for the scatter plot
+		scatterData = new double[t.data.size() * 2];
+		size_t x=0;
+		for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++, x++)
+		{
+			if ((*i) > maxval) maxval = *i;
+			scatterData[x*2] = x+1;
+			scatterData[x*2+1] = (*i);
+		}
 
-	// Second pass: calculate the histogram
-	double *data = new double[maxval*2];
-	for (unsigned long i=0; i<maxval; i++) {
-		data[i*2] = i+1;
-		data[i*2+1] = i;
+		// Save length of scatter chart data
+		scatterlen = x;
+
+		// Make sure we allocate enough data bins -- if maxval == 0, then we still
+		// need a bin for all the zero values.
+		// TODO: Allow maxval to be locked at a specific value
+		maxval++;
+
+		// Second pass: calculate the histogram
+		histData = new double[maxval*2];
+		for (unsigned long i=0; i<maxval; i++) {
+			histData[i*2] = i+1;
+			histData[i*2+1] = i;
+		}
+		for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
+			histData[(*i)*2 + 1]++;
 	}
-	for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
-		data[(*i)*2 + 1]++;
 
-	// create plot
+	// create plots
 	XYPlot *plot = new XYPlot();
 	// create dataset
 	XYSimpleDataset *dataset = new XYSimpleDataset();
 	// add a new series with our data
-	dataset->AddSerie((double *)data, maxval);
+	dataset->AddSerie((double *)histData, maxval);
 	// set renderer (line renderer)
 	dataset->SetRenderer(new XYLineRenderer());
 	// create number axes on left and bottom
@@ -408,12 +433,45 @@ void winMain::UpdateGraphs(void)
 
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));
-
 	histogramSizer->Clear();
 	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Layout();
 
-	delete[] data;
+
+	// create plots
+	XYPlot *Splot = new XYPlot();
+	// create dataset
+	XYSimpleDataset *Sdataset = new XYSimpleDataset();
+	// add a new series with our data
+	Sdataset->AddSerie((double *)scatterData, scatterlen);
+	// set renderer (line renderer)
+	XYLineRenderer *Srenderer = new XYLineRenderer(true, false);
+//	Srenderer->SetSerieSymbol(0, new CircleSymbol(2));
+	Srenderer->SetSerieSymbol(0, new CrossSymbol(4));
+	Sdataset->SetRenderer(Srenderer);
+	// create number axes on left and bottom
+	NumberAxis *SleftAxis = new NumberAxis(AXIS_LEFT);
+	NumberAxis *SbottomAxis = new NumberAxis(AXIS_BOTTOM);
+//	leftAxis->SetTitle(wxT("X Axis"));
+//	bottomAxis->SetTitle(wxT("Y Axis"));
+	// put it all together
+	Splot->AddDataset(Sdataset);
+	Splot->AddAxis(SleftAxis);
+	Splot->AddAxis(SbottomAxis);
+	// link data with axis
+	Splot->LinkDataVerticalAxis(0,0);
+	Splot->LinkDataHorizontalAxis(0,0);
+	// create a chart named "simple xy demo"
+	Chart *Schart = new Chart(Splot);//, wxT("Simple XY demo"));
+
+	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
+	wxChartPanel *SchartPanel = new wxChartPanel(scatterPanel, wxID_ANY, Schart, wxPoint(0, 0), wxSize(1, 1));
+	scatterSizer->Clear();
+	scatterSizer->Add(SchartPanel, 1, wxGROW | wxALL, 5);
+	scatterSizer->Layout();
+
+	delete[] histData;
+	delete[] scatterData;
 }
 
 
