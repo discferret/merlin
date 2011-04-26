@@ -480,40 +480,42 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 
 void winMain::OnTrackSelected( wxCommandEvent& event )
 {
-    double data[][2] = {
-        { 10, 20, },
-        { 13, 16, },
-        { 7, 30, },
-        { 15, 34, },
-        { 25, 4, }
-    };
+	double data[][2] = {
+		{ 10, 20, },
+		{ 13, 16, },
+		{ 7, 30, },
+		{ 15, 34, },
+		{ 25, 4, }
+	};
 
-    // create plot
-    XYPlot *plot = new XYPlot();
-    // create dataset
-    XYSimpleDataset *dataset = new XYSimpleDataset();
-    // add a new series with our data
-    dataset->AddSerie((double *)data, WXSIZEOF(data));
-    // set renderer (line renderer)
-    dataset->SetRenderer(new XYLineRenderer());
-    // create number axes on left and bottom
-    NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
-    NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
-    leftAxis->SetTitle(wxT("X Axis"));
-    bottomAxis->SetTitle(wxT("Y Axis"));
-    // put it all together
-    plot->AddDataset(dataset);
-    plot->AddAxis(leftAxis);
-    plot->AddAxis(bottomAxis);
-    // link data with axis
-    plot->LinkDataVerticalAxis(0,0);
-    plot->LinkDataHorizontalAxis(0,0);
-    // create a chart named "simple xy demo"
-    Chart *chart = new Chart(plot, wxT("Simple XY demo"));
-    wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize); //wxPoint(0, 0), wxSize(400, 400));
+	// create plot
+	XYPlot *plot = new XYPlot();
+	// create dataset
+	XYSimpleDataset *dataset = new XYSimpleDataset();
+	// add a new series with our data
+	dataset->AddSerie((double *)data, WXSIZEOF(data));
+	// set renderer (line renderer)
+	dataset->SetRenderer(new XYLineRenderer());
+	// create number axes on left and bottom
+	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
+	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
+	leftAxis->SetTitle(wxT("X Axis"));
+	bottomAxis->SetTitle(wxT("Y Axis"));
+	// put it all together
+	plot->AddDataset(dataset);
+	plot->AddAxis(leftAxis);
+	plot->AddAxis(bottomAxis);
+	// link data with axis
+	plot->LinkDataVerticalAxis(0,0);
+	plot->LinkDataHorizontalAxis(0,0);
+	// create a chart named "simple xy demo"
+	Chart *chart = new Chart(plot, wxT("Simple XY demo"));
+
+	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
+	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));
+
 	histogramSizer->Clear();
 	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Layout();
-    chartPanel->SetChart(chart);
 }
 
