@@ -132,7 +132,7 @@ LIB			=
 LIBPATH		=
 # include paths -- where to search for #include files (in addition to the
 # standard paths
-INCPATH		=	freechart/include
+INCPATH		=	include/freechart
 # garbage files that should be deleted on a 'make clean' or 'make tidy'
 GARBAGE		=
 
