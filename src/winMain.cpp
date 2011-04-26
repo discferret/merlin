@@ -177,7 +177,10 @@ void winMain::Init()
 	trackList = NULL;
 	histogramPanel = NULL;
 	histogramSizer = NULL;
-	wxp2 = NULL;
+	scatterPanel = NULL;
+	scatterSizer = NULL;
+	speedPanel = NULL;
+	speedSizer = NULL;
 	statusBar = NULL;
 ////@end winMain member initialisation
 }
@@ -193,15 +196,15 @@ void winMain::CreateControls()
 	winMain* itemFrame1 = this;
 
 	wxMenuBar* menuBar = new wxMenuBar;
-	wxMenu* itemMenu15 = new wxMenu;
-	wxMenu* itemMenu16 = new wxMenu;
-	itemMenu16->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
-	itemMenu15->Append(wxID_ANY, _("&Open"), itemMenu16);
-	itemMenu15->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
-	menuBar->Append(itemMenu15, _("&File"));
-	wxMenu* itemMenu19 = new wxMenu;
-	itemMenu19->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
-	menuBar->Append(itemMenu19, _("Help"));
+	wxMenu* itemMenu17 = new wxMenu;
+	wxMenu* itemMenu18 = new wxMenu;
+	itemMenu18->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
+	itemMenu17->Append(wxID_ANY, _("&Open"), itemMenu18);
+	itemMenu17->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
+	menuBar->Append(itemMenu17, _("&File"));
+	wxMenu* itemMenu21 = new wxMenu;
+	itemMenu21->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
+	menuBar->Append(itemMenu21, _("Help"));
 	itemFrame1->SetMenuBar(menuBar);
 
 	wxSplitterWindow* itemSplitterWindow2 = new wxSplitterWindow( itemFrame1, wxID_ANY, wxDefaultPosition, wxSize(100, 100), wxSP_3DBORDER|wxSP_3DSASH|wxSP_LIVE_UPDATE );
@@ -225,14 +228,18 @@ void winMain::CreateControls()
 	wxStaticBox* itemStaticBoxSizer9Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Scatter"));
 	wxStaticBoxSizer* itemStaticBoxSizer9 = new wxStaticBoxSizer(itemStaticBoxSizer9Static, wxHORIZONTAL);
 	itemBoxSizer5->Add(itemStaticBoxSizer9, 1, wxGROW|wxALL, 5);
-	wxp2 = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	itemStaticBoxSizer9->Add(wxp2, 1, wxGROW|wxALL, 5);
+	scatterPanel = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTAB_TRAVERSAL );
+	itemStaticBoxSizer9->Add(scatterPanel, 1, wxGROW|wxALL, 0);
+	scatterSizer = new wxBoxSizer(wxHORIZONTAL);
+	scatterPanel->SetSizer(scatterSizer);
 
-	wxStaticBox* itemStaticBoxSizer11Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Speed graph"));
-	wxStaticBoxSizer* itemStaticBoxSizer11 = new wxStaticBoxSizer(itemStaticBoxSizer11Static, wxHORIZONTAL);
-	itemBoxSizer5->Add(itemStaticBoxSizer11, 1, wxGROW|wxALL, 5);
-	wxPanel* itemPanel12 = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	itemStaticBoxSizer11->Add(itemPanel12, 1, wxGROW|wxALL, 5);
+	wxStaticBox* itemStaticBoxSizer12Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Speed graph"));
+	wxStaticBoxSizer* itemStaticBoxSizer12 = new wxStaticBoxSizer(itemStaticBoxSizer12Static, wxHORIZONTAL);
+	itemBoxSizer5->Add(itemStaticBoxSizer12, 1, wxGROW|wxALL, 5);
+	speedPanel = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTAB_TRAVERSAL );
+	itemStaticBoxSizer12->Add(speedPanel, 1, wxGROW|wxALL, 0);
+	speedSizer = new wxBoxSizer(wxHORIZONTAL);
+	speedPanel->SetSizer(speedSizer);
 
 	itemSplitterWindow2->SplitVertically(trackList, itemPanel4, 300);
 
@@ -345,6 +352,70 @@ void winMain::UpdateTrackList(void)
 	else
 		// Otherwise select the first item
 		trackList->SetSelection(0);
+
+	// Update the pretty pictures (the graphs)
+	UpdateGraphs();
+}
+
+/**
+ * Update the graph data from the track data vector.
+ */
+void winMain::UpdateGraphs(void)
+{
+	// Bail out if there isn't a track selected
+	if (trackList->GetSelection() == wxNOT_FOUND)
+		return;
+
+	// First pass: find the maximum value of the data in the trackarray
+	CTrack t = trackData[trackList->GetSelection()];
+	unsigned long maxval = 0;
+	for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
+		if ((*i) > maxval) maxval = *i;
+
+	// Make sure we allocate enough data bins -- if maxval == 0, then we still
+	// need a bin for all the zero values.
+	maxval++;
+
+	// Second pass: calculate the histogram
+	double *data = new double[maxval*2];
+	for (unsigned long i=0; i<maxval; i++) {
+		data[i*2] = i+1;
+		data[i*2+1] = i;
+	}
+	for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
+		data[(*i)*2 + 1]++;
+
+	// create plot
+	XYPlot *plot = new XYPlot();
+	// create dataset
+	XYSimpleDataset *dataset = new XYSimpleDataset();
+	// add a new series with our data
+	dataset->AddSerie((double *)data, maxval);
+	// set renderer (line renderer)
+	dataset->SetRenderer(new XYLineRenderer());
+	// create number axes on left and bottom
+	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
+	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
+//	leftAxis->SetTitle(wxT("X Axis"));
+//	bottomAxis->SetTitle(wxT("Y Axis"));
+	// put it all together
+	plot->AddDataset(dataset);
+	plot->AddAxis(leftAxis);
+	plot->AddAxis(bottomAxis);
+	// link data with axis
+	plot->LinkDataVerticalAxis(0,0);
+	plot->LinkDataHorizontalAxis(0,0);
+	// create a chart named "simple xy demo"
+	Chart *chart = new Chart(plot);//, wxT("Simple XY demo"));
+
+	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
+	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));
+
+	histogramSizer->Clear();
+	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
+	histogramSizer->Layout();
+
+	delete[] data;
 }
 
 
@@ -414,13 +485,13 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 			// INDEX flag; the remainder are used to store the timing value.
 			CTrack tk(cyl, head, -1);
 			for (streampos i=0; i<plen; i+=1)
-				tk.data.push_back(tbuf[plen] & 0x7f);
+				tk.data.push_back(tbuf[i] & 0x7f);
 
 			// Store track data
 			trackData.push_back(tk);
 
 			// Deallocate memory buffer
-			delete tbuf;
+			delete[] tbuf;
 		}
 
 		// File read complete; close the file
@@ -480,42 +551,6 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 
 void winMain::OnTrackSelected( wxCommandEvent& event )
 {
-	double data[][2] = {
-		{ 10, 20, },
-		{ 13, 16, },
-		{ 7, 30, },
-		{ 15, 34, },
-		{ 25, 4, }
-	};
-
-	// create plot
-	XYPlot *plot = new XYPlot();
-	// create dataset
-	XYSimpleDataset *dataset = new XYSimpleDataset();
-	// add a new series with our data
-	dataset->AddSerie((double *)data, WXSIZEOF(data));
-	// set renderer (line renderer)
-	dataset->SetRenderer(new XYLineRenderer());
-	// create number axes on left and bottom
-	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
-	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
-//	leftAxis->SetTitle(wxT("X Axis"));
-//	bottomAxis->SetTitle(wxT("Y Axis"));
-	// put it all together
-	plot->AddDataset(dataset);
-	plot->AddAxis(leftAxis);
-	plot->AddAxis(bottomAxis);
-	// link data with axis
-	plot->LinkDataVerticalAxis(0,0);
-	plot->LinkDataHorizontalAxis(0,0);
-	// create a chart named "simple xy demo"
-	Chart *chart = new Chart(plot);//, wxT("Simple XY demo"));
-
-	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
-	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));
-
-	histogramSizer->Clear();
-	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
-	histogramSizer->Layout();
+	UpdateGraphs();
 }
 

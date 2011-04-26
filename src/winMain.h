@@ -110,7 +110,10 @@ public:
 	wxListBox* trackList;
 	wxPanel* histogramPanel;
 	wxBoxSizer* histogramSizer;
-	wxPanel* wxp2;
+	wxPanel* scatterPanel;
+	wxBoxSizer* scatterSizer;
+	wxPanel* speedPanel;
+	wxBoxSizer* speedSizer;
 	wxStatusBar* statusBar;
 ////@end winMain member variables
 
@@ -119,6 +122,8 @@ public:
 
 	/// Update track list from trackData vector
 	void UpdateTrackList(void);
+	/// Update the graphs
+	void UpdateGraphs(void);
 };
 
 #endif
