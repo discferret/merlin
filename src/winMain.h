@@ -82,6 +82,9 @@ public:
 
 ////@begin winMain event handler declarations
 
+	/// wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST
+	void OnTrackSelected( wxCommandEvent& event );
+
 	/// wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
 	void OnFileOpenCatweaselIMGClick( wxCommandEvent& event );
 

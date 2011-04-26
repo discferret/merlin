@@ -53,6 +53,8 @@ IMPLEMENT_CLASS( winMain, wxFrame )
 BEGIN_EVENT_TABLE( winMain, wxFrame )
 
 ////@begin winMain event table entries
+	EVT_LISTBOX( ID_TRACKLIST, winMain::OnTrackSelected )
+
 	EVT_MENU( ID_FILEOPEN_CATWEASEL_IMG, winMain::OnFileOpenCatweaselIMGClick )
 
 	EVT_MENU( wxID_EXIT, winMain::OnEXITClick )
@@ -462,3 +464,21 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 	// Clean up after ourselves
 	OpenDialog->Destroy();
 }
+
+
+/*
+ * wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST
+ */
+
+void winMain::OnTrackSelected( wxCommandEvent& event )
+{
+	wxString st = _("Listbox item selected: ");
+	st << trackList->GetStringSelection();
+	wxMessageBox(st, _("Debug info"), wxOK | wxICON_INFORMATION, this);
+
+////@begin wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST in winMain.
+	// Before editing this code, remove the block markers.
+	event.Skip();
+////@end wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST in winMain. 
+}
+

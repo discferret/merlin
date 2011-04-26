@@ -403,6 +403,7 @@
               <long name="title-mode">0</long>
               <long name="locked">0</long>
               <string name="proxy-type">"wbListBoxProxy"</string>
+              <string name="event-handler-0">"wxEVT_COMMAND_LISTBOX_SELECTED|OnTrackSelected|NONE||winMain"</string>
               <string name="proxy-Id name">"ID_TRACKLIST"</string>
               <long name="proxy-Id value">10001</long>
               <string name="proxy-Name">""</string>
