@@ -480,47 +480,6 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 
 void winMain::OnTrackSelected( wxCommandEvent& event )
 {
-#if 0
-	wxString st = _("Listbox item selected: ");
-	st << trackList->GetStringSelection();
-//	wxMessageBox(st, _("Debug info"), wxOK | wxICON_INFORMATION, this);
-
-	double data[][2] = {
-		{ 10, 20, },
-		{ 13, 16, },
-		{ 7, 30, },
-		{ 15, 34, },
-		{ 25, 4, }
-	};
-
-	// create plot
-	XYPlot *plot = new XYPlot();
-	// create dataset
-	XYSimpleDataset *dataset = new XYSimpleDataset();
-	// add a new series with our data
-	dataset->AddSerie((double *)data, WXSIZEOF(data));
-	// set renderer (line renderer)
-	dataset->SetRenderer(new XYLineRenderer());
-	// create number axes on left and bottom
-	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
-	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
-	leftAxis->SetTitle(wxT("X Axis"));
-	bottomAxis->SetTitle(wxT("Y Axis"));
-	// put it all together
-	plot->AddDataset(dataset);
-	plot->AddAxis(leftAxis);
-	plot->AddAxis(bottomAxis);
-	// link data with axis
-	plot->LinkDataVerticalAxis(0,0);
-	plot->LinkDataHorizontalAxis(0,0);
-	// create a chart named "simple xy demo"
-	Chart *chart = new Chart(plot, wxT("Simple XY demo"));
-	wxChartPanel *chartPanel = new wxChartPanel(this);
-	chartPanel->SetChart(chart);
-//	histogramSizer->Add(chartPanel, 1, wxEXPAND);
-	//	, wxID_ANY, chart, wxPoint(0, 0), wxSize(400, 400));
-#endif
-
     double data[][2] = {
         { 10, 20, },
         { 13, 16, },
@@ -552,18 +511,9 @@ void winMain::OnTrackSelected( wxCommandEvent& event )
     // create a chart named "simple xy demo"
     Chart *chart = new Chart(plot, wxT("Simple XY demo"));
     wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, NULL, wxDefaultPosition, wxDefaultSize); //wxPoint(0, 0), wxSize(400, 400));
-//    histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Clear();
 	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Layout();
     chartPanel->SetChart(chart);
-
-
-#if 0
-////@begin wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST in winMain.
-	// Before editing this code, remove the block markers.
-	event.Skip();
-////@end wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_TRACKLIST in winMain. 
-#endif
 }
 
