@@ -196,7 +196,7 @@ void winMain::CreateControls()
 	wxMenu* itemMenu15 = new wxMenu;
 	wxMenu* itemMenu16 = new wxMenu;
 	itemMenu16->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
-	itemMenu15->Append(ID_MENU, _("&Open"), itemMenu16);
+	itemMenu15->Append(wxID_ANY, _("&Open"), itemMenu16);
 	itemMenu15->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
 	menuBar->Append(itemMenu15, _("&File"));
 	wxMenu* itemMenu19 = new wxMenu;
@@ -204,20 +204,20 @@ void winMain::CreateControls()
 	menuBar->Append(itemMenu19, _("Help"));
 	itemFrame1->SetMenuBar(menuBar);
 
-	wxSplitterWindow* itemSplitterWindow2 = new wxSplitterWindow( itemFrame1, ID_SPLITTERWINDOW, wxDefaultPosition, wxSize(100, 100), wxSP_3DBORDER|wxSP_3DSASH|wxSP_LIVE_UPDATE );
+	wxSplitterWindow* itemSplitterWindow2 = new wxSplitterWindow( itemFrame1, wxID_ANY, wxDefaultPosition, wxSize(100, 100), wxSP_3DBORDER|wxSP_3DSASH|wxSP_LIVE_UPDATE );
 	itemSplitterWindow2->SetMinimumPaneSize(0);
 
 	wxArrayString trackListStrings;
 	trackList = new wxListBox( itemSplitterWindow2, ID_TRACKLIST, wxDefaultPosition, wxDefaultSize, trackListStrings, wxLB_SINGLE );
 
-	wxPanel* itemPanel4 = new wxPanel( itemSplitterWindow2, ID_PANEL, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
+	wxPanel* itemPanel4 = new wxPanel( itemSplitterWindow2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
 	wxBoxSizer* itemBoxSizer5 = new wxBoxSizer(wxVERTICAL);
 	itemPanel4->SetSizer(itemBoxSizer5);
 
 	wxStaticBox* itemStaticBoxSizer6Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Histogram"));
 	wxStaticBoxSizer* itemStaticBoxSizer6 = new wxStaticBoxSizer(itemStaticBoxSizer6Static, wxHORIZONTAL);
 	itemBoxSizer5->Add(itemStaticBoxSizer6, 1, wxGROW|wxALL, 5);
-	histogramPanel = new wxPanel( itemPanel4, ID_PANEL3, wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTAB_TRAVERSAL );
+	histogramPanel = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTAB_TRAVERSAL );
 	itemStaticBoxSizer6->Add(histogramPanel, 1, wxGROW|wxALL, 0);
 	histogramSizer = new wxBoxSizer(wxHORIZONTAL);
 	histogramPanel->SetSizer(histogramSizer);
@@ -225,13 +225,13 @@ void winMain::CreateControls()
 	wxStaticBox* itemStaticBoxSizer9Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Scatter"));
 	wxStaticBoxSizer* itemStaticBoxSizer9 = new wxStaticBoxSizer(itemStaticBoxSizer9Static, wxHORIZONTAL);
 	itemBoxSizer5->Add(itemStaticBoxSizer9, 1, wxGROW|wxALL, 5);
-	wxp2 = new wxPanel( itemPanel4, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
+	wxp2 = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
 	itemStaticBoxSizer9->Add(wxp2, 1, wxGROW|wxALL, 5);
 
 	wxStaticBox* itemStaticBoxSizer11Static = new wxStaticBox(itemPanel4, wxID_ANY, _("Speed graph"));
 	wxStaticBoxSizer* itemStaticBoxSizer11 = new wxStaticBoxSizer(itemStaticBoxSizer11Static, wxHORIZONTAL);
 	itemBoxSizer5->Add(itemStaticBoxSizer11, 1, wxGROW|wxALL, 5);
-	wxPanel* itemPanel12 = new wxPanel( itemPanel4, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
+	wxPanel* itemPanel12 = new wxPanel( itemPanel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
 	itemStaticBoxSizer11->Add(itemPanel12, 1, wxGROW|wxALL, 5);
 
 	itemSplitterWindow2->SplitVertically(trackList, itemPanel4, 300);
@@ -499,8 +499,8 @@ void winMain::OnTrackSelected( wxCommandEvent& event )
 	// create number axes on left and bottom
 	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
 	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
-	leftAxis->SetTitle(wxT("X Axis"));
-	bottomAxis->SetTitle(wxT("Y Axis"));
+//	leftAxis->SetTitle(wxT("X Axis"));
+//	bottomAxis->SetTitle(wxT("Y Axis"));
 	// put it all together
 	plot->AddDataset(dataset);
 	plot->AddAxis(leftAxis);
@@ -509,7 +509,7 @@ void winMain::OnTrackSelected( wxCommandEvent& event )
 	plot->LinkDataVerticalAxis(0,0);
 	plot->LinkDataHorizontalAxis(0,0);
 	// create a chart named "simple xy demo"
-	Chart *chart = new Chart(plot, wxT("Simple XY demo"));
+	Chart *chart = new Chart(plot);//, wxT("Simple XY demo"));
 
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));

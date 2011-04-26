@@ -319,7 +319,7 @@
           <bool name="proxy-AUI manager">0</bool>
           <string name="proxy-Event sources">""</string>
           <document>
-            <string name="title">"wxSplitterWindow: ID_SPLITTERWINDOW"</string>
+            <string name="title">"wxSplitterWindow: wxID_ANY"</string>
             <string name="type">"dialog-control-document"</string>
             <string name="filename">""</string>
             <string name="icon-name">"splitter"</string>
@@ -328,8 +328,8 @@
             <long name="title-mode">0</long>
             <long name="locked">0</long>
             <string name="proxy-type">"wbSplitterWindowProxy"</string>
-            <string name="proxy-Id name">"ID_SPLITTERWINDOW"</string>
-            <long name="proxy-Id value">10002</long>
+            <string name="proxy-Id name">"wxID_ANY"</string>
+            <long name="proxy-Id value">-1</long>
             <string name="proxy-Name">""</string>
             <string name="proxy-Class">"wxSplitterWindow"</string>
             <string name="proxy-Base class">"wxSplitterWindow"</string>
@@ -468,7 +468,7 @@
               <string name="proxy-Custom ctor arguments">""</string>
             </document>
             <document>
-              <string name="title">"wxPanel: ID_PANEL"</string>
+              <string name="title">"wxPanel: wxID_ANY"</string>
               <string name="type">"dialog-control-document"</string>
               <string name="filename">""</string>
               <string name="icon-name">"panel"</string>
@@ -477,8 +477,8 @@
               <long name="title-mode">0</long>
               <long name="locked">0</long>
               <string name="proxy-type">"wbPanelProxy"</string>
-              <string name="proxy-Id name">"ID_PANEL"</string>
-              <long name="proxy-Id value">10007</long>
+              <string name="proxy-Id name">"wxID_ANY"</string>
+              <long name="proxy-Id value">-1</long>
               <string name="proxy-Name">""</string>
               <string name="proxy-Class">"wxPanel"</string>
               <string name="proxy-Base class">"wxPanel"</string>
@@ -599,7 +599,7 @@
                   <bool name="proxy-wxFIXED_MINSIZE">0</bool>
                   <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
                   <document>
-                    <string name="title">"wxPanel: ID_PANEL3"</string>
+                    <string name="title">"wxPanel: wxID_ANY"</string>
                     <string name="type">"dialog-control-document"</string>
                     <string name="filename">""</string>
                     <string name="icon-name">"panel"</string>
@@ -608,8 +608,8 @@
                     <long name="title-mode">0</long>
                     <long name="locked">0</long>
                     <string name="proxy-type">"wbPanelProxy"</string>
-                    <string name="proxy-Id name">"ID_PANEL3"</string>
-                    <long name="proxy-Id value">10010</long>
+                    <string name="proxy-Id name">"wxID_ANY"</string>
+                    <long name="proxy-Id value">-1</long>
                     <string name="proxy-Name">""</string>
                     <string name="proxy-Class">"wxPanel"</string>
                     <string name="proxy-Base class">"wxPanel"</string>
@@ -733,7 +733,7 @@
                   <bool name="proxy-wxFIXED_MINSIZE">0</bool>
                   <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
                   <document>
-                    <string name="title">"wxPanel: ID_PANEL2"</string>
+                    <string name="title">"wxPanel: wxID_ANY"</string>
                     <string name="type">"dialog-control-document"</string>
                     <string name="filename">""</string>
                     <string name="icon-name">"panel"</string>
@@ -742,8 +742,8 @@
                     <long name="title-mode">0</long>
                     <long name="locked">0</long>
                     <string name="proxy-type">"wbPanelProxy"</string>
-                    <string name="proxy-Id name">"ID_PANEL2"</string>
-                    <long name="proxy-Id value">10009</long>
+                    <string name="proxy-Id name">"wxID_ANY"</string>
+                    <long name="proxy-Id value">-1</long>
                     <string name="proxy-Name">""</string>
                     <string name="proxy-Class">"wxPanel"</string>
                     <string name="proxy-Base class">"wxPanel"</string>
@@ -842,7 +842,7 @@
                   <bool name="proxy-wxFIXED_MINSIZE">0</bool>
                   <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
                   <document>
-                    <string name="title">"wxPanel: ID_PANEL1"</string>
+                    <string name="title">"wxPanel: wxID_ANY"</string>
                     <string name="type">"dialog-control-document"</string>
                     <string name="filename">""</string>
                     <string name="icon-name">"panel"</string>
@@ -851,8 +851,8 @@
                     <long name="title-mode">0</long>
                     <long name="locked">0</long>
                     <string name="proxy-type">"wbPanelProxy"</string>
-                    <string name="proxy-Id name">"ID_PANEL1"</string>
-                    <long name="proxy-Id value">10008</long>
+                    <string name="proxy-Id name">"wxID_ANY"</string>
+                    <long name="proxy-Id value">-1</long>
                     <string name="proxy-Name">""</string>
                     <string name="proxy-Class">"wxPanel"</string>
                     <string name="proxy-Base class">"wxPanel"</string>
@@ -994,7 +994,6 @@
             <string name="proxy-type">"wbMenuBarProxy"</string>
             <string name="proxy-Id name">"ID_MENUBAR"</string>
             <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
-            <long name="proxy-Id value">10004</long>
             <document>
               <string name="title">"File"</string>
               <string name="type">"dialog-control-document"</string>
@@ -1010,7 +1009,7 @@
               <string name="proxy-Member variable name">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
               <document>
-                <string name="title">"Open: ID_MENU"</string>
+                <string name="title">"Open: wxID_ANY"</string>
                 <string name="type">"dialog-control-document"</string>
                 <string name="filename">""</string>
                 <string name="icon-name">"menu"</string>
@@ -1019,8 +1018,8 @@
                 <long name="title-mode">0</long>
                 <long name="locked">0</long>
                 <string name="proxy-type">"wbSubmenuProxy"</string>
-                <string name="proxy-Id name">"ID_MENU"</string>
-                <long name="proxy-Id value">10005</long>
+                <string name="proxy-Id name">"wxID_ANY"</string>
+                <long name="proxy-Id value">-1</long>
                 <string name="proxy-Label">"&amp;Open"</string>
                 <string name="proxy-Help text">""</string>
                 <bool name="proxy-Enabled">1</bool>
