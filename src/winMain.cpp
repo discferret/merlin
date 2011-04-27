@@ -402,7 +402,7 @@ void winMain::UpdateGraphs(void)
 		histData = new double[maxval*2];
 		for (unsigned long i=0; i<maxval; i++) {
 			histData[i*2] = i+1;
-			histData[i*2+1] = i;
+			histData[i*2+1] = 0;
 		}
 		for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
 			histData[(*i)*2 + 1]++;
@@ -431,9 +431,9 @@ void winMain::UpdateGraphs(void)
 	HbottomAxis->SetTickFormat(wxT("%0.0f"));
 	HbottomAxis->SetVerticalLabelText(true);
 	// put it all together
-	Hplot->AddDataset(dataset);
-	Hplot->AddAxis(leftAxis);
-	Hplot->AddAxis(bottomAxis);
+	Hplot->AddDataset(Hdataset);
+	Hplot->AddAxis(HleftAxis);
+	Hplot->AddAxis(HbottomAxis);
 	// link data with axis
 	Hplot->LinkDataVerticalAxis(0,0);
 	Hplot->LinkDataHorizontalAxis(0,0);
