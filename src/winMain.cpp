@@ -408,12 +408,20 @@ void winMain::UpdateGraphs(void)
 			histData[(*i)*2 + 1]++;
 	}
 
+	// Delete any existing charts in the sizers
+	if (histogramSizer->GetChildren().GetCount() > 0)
+		histogramSizer->GetItem((size_t)0)->GetWindow()->Destroy();
+
+	if (scatterSizer->GetChildren().GetCount() > 0)
+		scatterSizer->GetItem((size_t)0)->GetWindow()->Destroy();
+
+
 	// create plots
 	XYPlot *plot = new XYPlot();
 	// create dataset
 	XYSimpleDataset *dataset = new XYSimpleDataset();
 	// add a new series with our data
-	dataset->AddSerie((double *)histData, maxval);
+	dataset->AddSerie(histData, maxval);
 	// set renderer (line renderer)
 	dataset->SetRenderer(new XYLineRenderer());
 	// create number axes on left and bottom
@@ -421,6 +429,9 @@ void winMain::UpdateGraphs(void)
 	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
 //	leftAxis->SetTitle(wxT("X Axis"));
 //	bottomAxis->SetTitle(wxT("Y Axis"));
+	bottomAxis->SetLabelCount(maxval);
+	bottomAxis->SetTickFormat(wxT("%0.0f"));
+	bottomAxis->SetVerticalLabelText(true);
 	// put it all together
 	plot->AddDataset(dataset);
 	plot->AddAxis(leftAxis);
@@ -433,6 +444,8 @@ void winMain::UpdateGraphs(void)
 
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));
+//	chartPanel->SetAntialias(true);
+
 	histogramSizer->Clear();
 	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Layout();
@@ -443,7 +456,7 @@ void winMain::UpdateGraphs(void)
 	// create dataset
 	XYSimpleDataset *Sdataset = new XYSimpleDataset();
 	// add a new series with our data
-	Sdataset->AddSerie((double *)scatterData, scatterlen);
+	Sdataset->AddSerie(scatterData, scatterlen);
 	// set renderer (line renderer)
 	XYLineRenderer *Srenderer = new XYLineRenderer(true, false);
 //	Srenderer->SetSerieSymbol(0, new CircleSymbol(2));
@@ -466,6 +479,7 @@ void winMain::UpdateGraphs(void)
 
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *SchartPanel = new wxChartPanel(scatterPanel, wxID_ANY, Schart, wxPoint(0, 0), wxSize(1, 1));
+//	SchartPanel->SetAntialias(true);
 	scatterSizer->Clear();
 	scatterSizer->Add(SchartPanel, 1, wxGROW | wxALL, 5);
 	scatterSizer->Layout();
