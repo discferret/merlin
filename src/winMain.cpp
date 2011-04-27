@@ -416,42 +416,39 @@ void winMain::UpdateGraphs(void)
 		scatterSizer->GetItem((size_t)0)->GetWindow()->Destroy();
 
 
-	// create plots
-	XYPlot *plot = new XYPlot();
+	// create histogram plot
+	XYPlot *Hplot = new XYPlot();
 	// create dataset
-	XYSimpleDataset *dataset = new XYSimpleDataset();
+	XYSimpleDataset *Hdataset = new XYSimpleDataset();
 	// add a new series with our data
-	dataset->AddSerie(histData, maxval);
+	Hdataset->AddSerie(histData, maxval);
 	// set renderer (line renderer)
-	dataset->SetRenderer(new XYLineRenderer());
+	Hdataset->SetRenderer(new XYLineRenderer());
 	// create number axes on left and bottom
-	NumberAxis *leftAxis = new NumberAxis(AXIS_LEFT);
-	NumberAxis *bottomAxis = new NumberAxis(AXIS_BOTTOM);
-//	leftAxis->SetTitle(wxT("X Axis"));
-//	bottomAxis->SetTitle(wxT("Y Axis"));
-	bottomAxis->SetLabelCount(maxval);
-	bottomAxis->SetTickFormat(wxT("%0.0f"));
-	bottomAxis->SetVerticalLabelText(true);
+	NumberAxis *HleftAxis = new NumberAxis(AXIS_LEFT);
+	NumberAxis *HbottomAxis = new NumberAxis(AXIS_BOTTOM);
+	HbottomAxis->SetLabelCount(maxval);
+	HbottomAxis->SetTickFormat(wxT("%0.0f"));
+	HbottomAxis->SetVerticalLabelText(true);
 	// put it all together
-	plot->AddDataset(dataset);
-	plot->AddAxis(leftAxis);
-	plot->AddAxis(bottomAxis);
+	Hplot->AddDataset(dataset);
+	Hplot->AddAxis(leftAxis);
+	Hplot->AddAxis(bottomAxis);
 	// link data with axis
-	plot->LinkDataVerticalAxis(0,0);
-	plot->LinkDataHorizontalAxis(0,0);
+	Hplot->LinkDataVerticalAxis(0,0);
+	Hplot->LinkDataHorizontalAxis(0,0);
 	// create a chart named "simple xy demo"
-	Chart *chart = new Chart(plot);//, wxT("Simple XY demo"));
-
+	Chart *Hchart = new Chart(Hplot);
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
-	wxChartPanel *chartPanel = new wxChartPanel(histogramPanel, wxID_ANY, chart, wxPoint(0, 0), wxSize(1, 1));
+	wxChartPanel *HchartPanel = new wxChartPanel(histogramPanel, wxID_ANY, Hchart, wxPoint(0, 0), wxSize(1, 1));
 //	chartPanel->SetAntialias(true);
-
 	histogramSizer->Clear();
-	histogramSizer->Add(chartPanel, 1, wxGROW | wxALL, 5);
+	histogramSizer->Add(HchartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Layout();
 
+	// TODO: dashed markers for detected peaks
 
-	// create plots
+	// create scatter plot
 	XYPlot *Splot = new XYPlot();
 	// create dataset
 	XYSimpleDataset *Sdataset = new XYSimpleDataset();
@@ -465,8 +462,6 @@ void winMain::UpdateGraphs(void)
 	// create number axes on left and bottom
 	NumberAxis *SleftAxis = new NumberAxis(AXIS_LEFT);
 	NumberAxis *SbottomAxis = new NumberAxis(AXIS_BOTTOM);
-//	leftAxis->SetTitle(wxT("X Axis"));
-//	bottomAxis->SetTitle(wxT("Y Axis"));
 	// put it all together
 	Splot->AddDataset(Sdataset);
 	Splot->AddAxis(SleftAxis);
