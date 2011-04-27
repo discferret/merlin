@@ -401,12 +401,49 @@ void winMain::UpdateGraphs(void)
 		// Second pass: calculate the histogram
 		histData = new double[maxval*2];
 		for (unsigned long i=0; i<maxval; i++) {
-			histData[i*2] = i+1;
+			histData[i*2] = (((double)i+1.0) * 1.0e6l) / t.freq();
 			histData[i*2+1] = 0;
 		}
 		for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++)
 			histData[(*i)*2 + 1]++;
 	}
+
+	// Find peaks
+	// This is a C implementation of Eli Billauer's PEAKDET algorithm
+	vector<int> peakpos;
+	double mx = -INFINITY, mn = INFINITY;
+	int mxpos, mnpos;
+	bool lookformax = true;
+	double delta = 20;
+	for (size_t i=0; i<maxval; i++) {
+		double cur = histData[i*2+1];
+		if (cur > mx) {
+			mx = cur;
+			mxpos = i;
+		}
+
+		if (cur < mn) {
+			mn = cur;
+			mnpos = i;
+		}
+
+		if (lookformax) {
+			if (cur < (mx - delta)) {
+				peakpos.push_back(mxpos);
+				mn = cur; mnpos = i;
+				lookformax = false;
+			}
+		} else {
+			if (cur > (mn + delta)) {
+				// mintab.push_back(mnpos);
+				mx = cur; mxpos = i;
+				lookformax = true;
+			}
+		}
+	}
+
+	for (vector<int>::const_iterator i = peakpos.begin(); i != peakpos.end(); i++)
+		cout << "peak: t=" << (*i)+1 << endl;
 
 	// Delete any existing charts in the sizers
 	if (histogramSizer->GetChildren().GetCount() > 0)
@@ -420,15 +457,13 @@ void winMain::UpdateGraphs(void)
 	XYPlot *Hplot = new XYPlot();
 	// create dataset
 	XYSimpleDataset *Hdataset = new XYSimpleDataset();
-	// add a new series with our data
 	Hdataset->AddSerie(histData, maxval);
-	// set renderer (line renderer)
 	Hdataset->SetRenderer(new XYLineRenderer());
 	// create number axes on left and bottom
 	NumberAxis *HleftAxis = new NumberAxis(AXIS_LEFT);
 	NumberAxis *HbottomAxis = new NumberAxis(AXIS_BOTTOM);
 	HbottomAxis->SetLabelCount(maxval);
-	HbottomAxis->SetTickFormat(wxT("%0.0f"));
+	HbottomAxis->SetTickFormat(wxT("%0.2f"));
 	HbottomAxis->SetVerticalLabelText(true);
 	// put it all together
 	Hplot->AddDataset(Hdataset);
@@ -437,7 +472,7 @@ void winMain::UpdateGraphs(void)
 	// link data with axis
 	Hplot->LinkDataVerticalAxis(0,0);
 	Hplot->LinkDataHorizontalAxis(0,0);
-	// create a chart named "simple xy demo"
+	// create the histogram chart and link it to a chart panel
 	Chart *Hchart = new Chart(Hplot);
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *HchartPanel = new wxChartPanel(histogramPanel, wxID_ANY, Hchart, wxPoint(0, 0), wxSize(1, 1));
@@ -452,11 +487,9 @@ void winMain::UpdateGraphs(void)
 	XYPlot *Splot = new XYPlot();
 	// create dataset
 	XYSimpleDataset *Sdataset = new XYSimpleDataset();
-	// add a new series with our data
 	Sdataset->AddSerie(scatterData, scatterlen);
-	// set renderer (line renderer)
 	XYLineRenderer *Srenderer = new XYLineRenderer(true, false);
-//	Srenderer->SetSerieSymbol(0, new CircleSymbol(2));
+	// TODO: maybe come up with a single-pixel marker for scatter plots
 	Srenderer->SetSerieSymbol(0, new CrossSymbol(4));
 	Sdataset->SetRenderer(Srenderer);
 	// create number axes on left and bottom
@@ -469,9 +502,8 @@ void winMain::UpdateGraphs(void)
 	// link data with axis
 	Splot->LinkDataVerticalAxis(0,0);
 	Splot->LinkDataHorizontalAxis(0,0);
-	// create a chart named "simple xy demo"
-	Chart *Schart = new Chart(Splot);//, wxT("Simple XY demo"));
-
+	// create the histogram chart and link it to a chart panel
+	Chart *Schart = new Chart(Splot);
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *SchartPanel = new wxChartPanel(scatterPanel, wxID_ANY, Schart, wxPoint(0, 0), wxSize(1, 1));
 //	SchartPanel->SetAntialias(true);
@@ -549,6 +581,7 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 			// Note that Catweasel data consists of raw timing values. The MSbit is the
 			// INDEX flag; the remainder are used to store the timing value.
 			CTrack tk(cyl, head, -1);
+			tk.freq(28.322e6l);
 			for (streampos i=0; i<plen; i+=1)
 				tk.data.push_back(tbuf[i] & 0x7f);
 

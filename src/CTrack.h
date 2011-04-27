@@ -16,6 +16,8 @@ class CTrack {
 		long hd;
 		/// Sector
 		long sec;
+		/// Acquisition frequency in Hz
+		double frq;
 
 	public:
 		// Iterator helpers for data store
@@ -28,9 +30,11 @@ class CTrack {
 		const long cylinder() const	{ return cyl; };
 		const long head() const		{ return hd; };
 		const long sector() const	{ return sec; };
+		const double freq() const	{ return frq; };
 		void cylinder(long val)		{ cyl = val; };
 		void head(long val)			{ hd = val; };
 		void sector(long val)		{ sec = val; };
+		void freq(double val)		{ frq = val; };
 
 		/**
 		 * Create an empty track, with the address fields set to "not known".

@@ -15,6 +15,7 @@ using namespace std;
 CTrack::CTrack()
 {
 	cyl = hd = sec = -1;
+	frq = 1;	// 1Hz.. a bit poor, but it prevents Divide By Zeros
 }
 
 /**
@@ -22,10 +23,11 @@ CTrack::CTrack()
  */
 CTrack::CTrack(const CTrack &orig)
 {
-	// Copy CHS address
+	// Copy CHS address and frequency
 	cylinder(orig.cylinder());
 	head(orig.head());
 	sector(orig.sector());
+	freq(orig.freq());
 
 	// Reserve some space for the data and copy it across
 	this->data.reserve(orig.data.size());
@@ -41,5 +43,6 @@ CTrack::CTrack(long c, long h, long s)
 	cylinder(c);
 	head(h);
 	sector(s);
+	freq(1);
 }
 
