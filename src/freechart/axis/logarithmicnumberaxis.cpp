@@ -40,6 +40,11 @@ double LogarithmicNumberAxis::GetValue(size_t step)
 	double min, max;
 	GetDataBounds(min, max);
 
+	// Trap situations which can cause NaNs -- log(n) is undefined for n <= 0
+	if ((min == 0.0) && (step == 0)) return 0.0;
+	if (min <= 0.0) min = 1;
+	if (max <= 0.0) max = 1;
+
 	double logMin = log(min) / log(m_logBase);
 	double logMax = log(max) / log(m_logBase);
 
@@ -73,9 +78,9 @@ wxCoord LogarithmicNumberAxis::ToGraphics(wxDC &dc, int minCoord, int gRange, do
 		maxValue = m_winPos + m_winWidth;
 	}
 
-	double logValue = log(value) / log(m_logBase);
-	double logMax = log(maxValue) / log(m_logBase);
-	double logMin = log(minValue) / log(m_logBase);
+	double logValue = (value <= 0.0) ? 0.0 : log(value) / log(m_logBase);
+	double logMax = (maxValue <= 0.0) ? 0.0 : log(maxValue) / log(m_logBase);
+	double logMin = (minValue <= 0.0) ? 0.0 : log(minValue) / log(m_logBase);
 
 	return ::ToGraphics(minCoord, gRange, logMin, logMax, 0/*textMargin*/, IsVertical(), logValue);
 }
@@ -96,7 +101,7 @@ double LogarithmicNumberAxis::ToData(wxDC &dc, int minCoord, int gRange, wxCoord
 		maxValue = m_winPos + m_winWidth;
 	}
 
-	double logMin = log(minValue) / log(m_logBase);
-	double logMax = log(minValue) / log(m_logBase);
+	double logMin = (minValue <= 0.0) ? 0.0 : log(minValue) / log(m_logBase);
+	double logMax = (maxValue <= 0.0) ? 0.0 : log(maxValue) / log(m_logBase);
 	return ::ToData(minCoord, gRange, logMin, logMax, 0/*textMargin*/, IsVertical(), g);
 }
