@@ -414,7 +414,7 @@ void winMain::UpdateGraphs(void)
 	double mx = -INFINITY, mn = INFINITY;
 	int mxpos, mnpos;
 	bool lookformax = true;
-	double delta = 20;
+	double delta = 200;
 	for (size_t i=0; i<maxval; i++) {
 		double cur = histData[i*2+1];
 		if (cur > mx) {
@@ -442,9 +442,6 @@ void winMain::UpdateGraphs(void)
 		}
 	}
 
-	for (vector<int>::const_iterator i = peakpos.begin(); i != peakpos.end(); i++)
-		cout << "peak: t=" << (*i)+1 << endl;
-
 	// Delete any existing charts in the sizers
 	if (histogramSizer->GetChildren().GetCount() > 0)
 		histogramSizer->GetItem((size_t)0)->GetWindow()->Destroy();
@@ -454,9 +451,19 @@ void winMain::UpdateGraphs(void)
 
 
 	// create histogram plot
+	// TODO: add tooltip to display current X/Y position
 	XYPlot *Hplot = new XYPlot();
 	// create dataset
 	XYSimpleDataset *Hdataset = new XYSimpleDataset();
+	// add markers to dataset
+	for (vector<int>::const_iterator i = peakpos.begin(); i != peakpos.end(); i++) {
+		// TODO: list of peaks?
+//		cout << "peak: t=" << (*i)+1 << " (" << (((double)(*i)+1.0) * 1.0e6l) / t.freq() << ")" << endl;
+		LineMarker *mkr = new LineMarker(*wxRED_PEN);
+		mkr->SetVerticalLine((((double)(*i)+1.0) * 1.0e6l) / t.freq());
+		Hdataset->AddMarker(mkr);
+	}
+	// add series to dataset and set up the renderer
 	Hdataset->AddSerie(histData, maxval);
 	Hdataset->SetRenderer(new XYLineRenderer());
 	// create number axes on left and bottom
@@ -476,7 +483,7 @@ void winMain::UpdateGraphs(void)
 	Chart *Hchart = new Chart(Hplot);
 	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
 	wxChartPanel *HchartPanel = new wxChartPanel(histogramPanel, wxID_ANY, Hchart, wxPoint(0, 0), wxSize(1, 1));
-//	chartPanel->SetAntialias(true);
+//	HchartPanel->SetAntialias(true);
 	histogramSizer->Clear();
 	histogramSizer->Add(HchartPanel, 1, wxGROW | wxALL, 5);
 	histogramSizer->Layout();
@@ -581,6 +588,7 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 			// Note that Catweasel data consists of raw timing values. The MSbit is the
 			// INDEX flag; the remainder are used to store the timing value.
 			CTrack tk(cyl, head, -1);
+			// IMG files don't specify the acquisition rate. Assume 28.322MHz (the max for a Catweasel Mk.III/Mk.IV)
 			tk.freq(28.322e6l);
 			for (streampos i=0; i<plen; i+=1)
 				tk.data.push_back(tbuf[i] & 0x7f);
