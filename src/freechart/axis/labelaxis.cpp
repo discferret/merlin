@@ -52,7 +52,7 @@ wxCoord LabelAxis::GetExtent(wxDC &dc)
 			extent += maxLabelExtent.x;
 		}
 
-		extent += titleExtent.x;
+		extent += titleExtent.y;
 		extent += m_labelPen.GetWidth();
 	}
 	else {
