@@ -28,6 +28,7 @@
 #include "wx/xy/xyplot.h"
 #include "wx/xy/xysimpledataset.h"
 #include "wx/xy/xylinerenderer.h"
+#include "wx/axis/logarithmicnumberaxis.h"
 #include "wx/chart.h"
 #include "wx/chartpanel.h"
 
@@ -499,13 +500,25 @@ void winMain::UpdateGraphs(void)
 	Hdataset->AddSerie(histData, maxval);
 	Hdataset->SetRenderer(new XYLineRenderer());
 	// create number axes on left and bottom
+//#define LOGARITHMIC_HISTOGRAM
+#ifdef LOGARITHMIC_HISTOGRAM
+	LogarithmicNumberAxis *HleftAxis = new LogarithmicNumberAxis(AXIS_LEFT);
+#else
 	NumberAxis *HleftAxis = new NumberAxis(AXIS_LEFT);
+#endif
 	NumberAxis *HbottomAxis = new NumberAxis(AXIS_BOTTOM);
 	HbottomAxis->SetLabelCount(maxval);
 	HbottomAxis->SetTickFormat(wxT("%0.2f"));
 	HbottomAxis->SetVerticalLabelText(true);
 	HbottomAxis->SetTitle(_("Time (\u00b5s)"));
+#ifdef LOGARITHMIC_HISTOGRAM
+	HleftAxis->SetTitle(_("Counts [log]"));
+	HleftAxis->EnableLongLabelExponent(true);
+#else
 	HleftAxis->SetTitle(_("Counts"));
+#endif
+	HleftAxis->SetLabelCount(11);
+	HleftAxis->SetTickFormat(wxT("%0.0f"));
 	// put it all together
 	Hplot->AddDataset(Hdataset);
 	Hplot->AddAxis(HleftAxis);
