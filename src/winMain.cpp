@@ -465,7 +465,7 @@ void winMain::UpdateGraphs(void)
 			}
 		}
 		speedplotData[spdpos*2] = spdpos;
-		speedplotData[spdpos*2+1] = (((double)(*i)+1.0) / ((double)peakpos[mePos]+1.0) * 100.0) - 100.0;
+		speedplotData[spdpos*2+1] = 0.0 - ((((double)(*i)+1.0) / ((double)peakpos[mePos]+1.0) * 100.0) - 100.0);
 	}
 	delete mult;
 
