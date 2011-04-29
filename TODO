@@ -1,0 +1,15 @@
+TODO:
+	Histogram Y-axis can be made logarithmic by ifdef. Make this configurable at runtime.
+	Histogram X-axis and scatter plot Y-axis are based on transition-time in us. We used to use the number of timer ticks. Make both options available and user-selectable at runtime.
+	Make the tick interval configurable for X/Y axes on the various charts
+	Allow the histogram X axis range to be user-set (or at least the max value). e.g.:
+	  - Maxval (track)
+	  - Maxval (all tracks)
+	  - User specified maxval (e.g. 128 / ~5us for Catweasel samples)
+	Allow acquisition frequency to be overridden
+	UI redesign and relayout, with separate box for statistics calculated from the transition data
+	  - Standard Deviation, mean deviation, ...
+	Add configuration screen, config / window position saving
+	Bigger icon on the About screen (64x64 DiscFerret icon?)
+
+	Push some more of the Freechart patches up to sourceforge (e.g. Log-axis zero-value fix)
