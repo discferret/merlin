@@ -387,7 +387,7 @@ void winMain::UpdateGraphs(void)
 		{
 			if ((*i) > maxval) maxval = *i;
 			scatterData[x*2] = x+1;
-			scatterData[x*2+1] = (*i);
+			scatterData[x*2+1] = (((double)(*i)+1.0) * 1.0e6l) / t.freq();
 		}
 
 		// Save length of scatter chart data
@@ -537,7 +537,8 @@ void winMain::UpdateGraphs(void)
 	SbottomAxis->SetLabelCount(20);
 	SbottomAxis->SetTickFormat(wxT("%0.0f"));
 	SbottomAxis->SetTitle(_("Sample offset"));
-	SleftAxis->SetTitle(_("Timing value"));		// TODO: change to time usecs
+	SleftAxis->SetTitle(_("Time (\u00b5s)"));
+	SleftAxis->SetLabelCount(11);
 	// put it all together
 	Splot->AddDataset(Sdataset);
 	Splot->AddAxis(SleftAxis);
