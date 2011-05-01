@@ -1130,7 +1130,7 @@
               <long name="title-mode">0</long>
               <long name="locked">0</long>
               <string name="proxy-type">"wbMenuProxy"</string>
-              <string name="proxy-Label">"Help"</string>
+              <string name="proxy-Label">"&amp;Help"</string>
               <bool name="proxy-Enabled">1</bool>
               <string name="proxy-Member variable name">""</string>
               <string name="proxy-Platform">"&lt;Any platform&gt;"</string>

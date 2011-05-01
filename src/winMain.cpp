@@ -203,7 +203,7 @@ void winMain::CreateControls()
 	menuBar->Append(itemMenu17, _("&File"));
 	wxMenu* itemMenu21 = new wxMenu;
 	itemMenu21->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
-	menuBar->Append(itemMenu21, _("Help"));
+	menuBar->Append(itemMenu21, _("&Help"));
 	itemFrame1->SetMenuBar(menuBar);
 
 	wxSplitterWindow* itemSplitterWindow2 = new wxSplitterWindow( itemFrame1, wxID_ANY, wxDefaultPosition, wxSize(100, 100), wxSP_3DBORDER|wxSP_3DSASH|wxSP_LIVE_UPDATE );
