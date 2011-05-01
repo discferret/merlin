@@ -1,0 +1,133 @@
+ __  __           _ _
+|  \/  | ___ _ __| (_)_ __
+| |\/| |/ _ \ '__| | | '_ \
+| |  | |  __/ |  | | | | | |
+|_|  |_|\___|_|  |_|_|_| |_|
+
+Merlin: A simple tool for analysing magnetic disc images
+
+-----------------------------------------------------------------------------
+
+Copyright (C) 2010-2011 Philip A. Pemberton, Jr. (t/a Red Fox Engineering).
+All rights reserved.
+
+Files in the "/misc/freechart", "/include/freechart" and "src/freechart"
+directories are based on wxFreeChart version 1.6 by Moskvichev Andrey V.,
+and are distributed under the terms of the wxWidgets License. Several bug-fix
+patches have been applied to this code; these are distributed under the same
+license terms as the original wxFreeChart code.
+
+All other files in this distribution are distributed under the terms of the
+GNU General Public License, Version 2. See the text file "COPYING" for
+further details about the terms of this license.
+
+-----------------------------------------------------------------------------
+
+
+1. What is Merlin?
+==================
+
+Merlin is a wxWidgets-based application, designed for UNIX systems (e.g.
+Linux, BSD, Mac OS X) which allows the user to see a visual representation
+of data captured using a DiscFerret or CatWeasel magnetic disc analyser.
+
+It provides three main visualisation functions:
+  * Histogram. Displays the various timing periods used on the disc, and
+    the relative frequency of their use.
+
+  * SpeedGraph. Displays a plot of the disc data rate versus sample number.
+    This diagram can be used to determine whether a disc was written as one
+    continuous track, or (with sufficient timing data) if it was written
+    by multiple different disc drives and/or controllers.
+
+  * Scatter plot. This can be used to assess the quality of a disc image.
+    An ideal image will show a narrow horizontal line for each histogram
+    peak, with good separation between the peaks and little data in the
+    "white space". This analysis function was added as a result of a "that
+    looks darned useful!" moment inspired by the following article on
+    techtravels.org:
+      <http://techtravels.org/amiga/amigablog/?p=362>
+
+
+
+2. How do I build Merlin?
+=========================
+
+You will need:
+  - A working C++ compiler.
+  - GNU Make.
+  - The current wxWidgets 2.8 libraries and development headers.
+
+If you want to edit the dialogue resources, a copy of DialogBlocks will be
+extremely useful. This is a shareware application developed and published by
+Anthemion Software; see <http://www.dialogblocks.com/> for more information.
+
+Merlin is currently being developed with the following tools:
+  - Ubuntu Linux 10.10 "Maverick Meerkat"
+  - DialogBlocks 4.40
+  - GNU GCC 4.4.5 (Ubuntu/Linaro)
+  - GNU Make 3.81
+  - wxWidgets 2.8.11
+
+It should be possible to build Merlin 'verbatim' on any recent Linux
+distribution (e.g. within the past 18 months or so). For Debian- and
+Ubuntu-based distributions, the following Apt packages will be required to
+build Merlin from source:
+
+  - build-essential
+  - libwxbase2.8-dev
+  - libwxgtk2.8-dev
+
+When you have all of these installed, decompress the Merlin distribution
+tarball ('tar -zxf' or 'tar -jxf'), then 'cd' into the newly-created Merlin
+directory and run 'make'. The Merlin executable will be placed in the current
+directory, and will be called... "merlin"
+
+Type "./merlin" at a terminal window (gtkterm, xterm, etc.) to run Merlin.
+
+
+3. How do I use this thing?
+
+  1. Load an image file.
+     This is done via the File -> Open menu; you will need to select the
+     appropriate file format from the list presented.
+
+  2. Select a disc track to analyse.
+     Assuming the file loaded correctly (Merlin will tell you if it didn't),
+     you will need to select a disc track from the list on the left side of
+     the Merlin window.
+     The format for entries in this list is:
+       <track>:<side>/<sector> [<X> samples]
+
+     track:  Disc physical track number. If you have a 40-track image, this
+             will range from 0 to 39. For an 80-track image, it will range
+             from 0 to 79... you get the idea.
+
+     side:   Physical side (head) number. Head 0 is usually written to first,
+             then Head 1, and so on (if there are any other heads). Some disc
+             formats may do this differently.
+
+     sector: Disc sector number. This will only be shown for hard-sectored
+             disc images. Sector 1 is the first sector after the track mark.
+
+     X:      Number of timing samples recorded by the analyser. This can be
+             anywhere from around 40,000 (Catweasel image of a 5.25in DD disc
+             at 28MHz) to 520,000 or more (DiscFerret image of a very long
+             track, e.g. Nintendo Famicom Disc System).
+
+  3. Play :)
+
+
+
+4. So who's responsible for this thing?
+=======================================
+
+That would be me:
+  Philip Pemberton -- <philpem@philpem.me.uk> or <phil@discferret.com>
+
+The latest version of this application can be found at:
+  <http://www.discferret.com/>
+
+Please feel free to report bugs, submit patches, or make feature requests. The
+TODO file contains a list of features which are currently awaiting
+implementation.
