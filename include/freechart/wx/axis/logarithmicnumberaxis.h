@@ -17,7 +17,7 @@
  */
 class WXDLLIMPEXP_FREECHART LogarithmicNumberAxis : public NumberAxis
 {
-	DECLARE_CLASS(LogarithmicNumberAxis);
+	DECLARE_CLASS(LogarithmicNumberAxis)
 public:
 	LogarithmicNumberAxis(AXIS_LOCATION location);
 	virtual ~LogarithmicNumberAxis();
