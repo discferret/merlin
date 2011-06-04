@@ -45,6 +45,7 @@ class wxStatusBar;
 #define ID_TRACKLIST 10001
 #define ID_STATUSBAR 10003
 #define ID_FILEOPEN_CATWEASEL_IMG 10006
+#define ID_FILEOPEN_DISCFERRET_IMAGE 10002
 #define SYMBOL_WINMAIN_STYLE wxDEFAULT_FRAME_STYLE|wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxMINIMIZE_BOX|wxMAXIMIZE_BOX|wxCLOSE_BOX|wxFULL_REPAINT_ON_RESIZE
 #define SYMBOL_WINMAIN_TITLE _("Merlin")
 #define SYMBOL_WINMAIN_IDNAME ID_WINMAIN
@@ -85,6 +86,9 @@ public:
 
 	/// wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
 	void OnFileOpenCatweaselIMGClick( wxCommandEvent& event );
+
+	/// wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_DISCFERRET_IMAGE
+	void OnFileOpenDiscFerretImageClick( wxCommandEvent& event );
 
 	/// wxEVT_COMMAND_MENU_SELECTED event handler for wxID_EXIT
 	void OnEXITClick( wxCommandEvent& event );

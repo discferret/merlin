@@ -64,6 +64,8 @@ BEGIN_EVENT_TABLE( winMain, wxFrame )
 
 	EVT_MENU( ID_FILEOPEN_CATWEASEL_IMG, winMain::OnFileOpenCatweaselIMGClick )
 
+	EVT_MENU( ID_FILEOPEN_DISCFERRET_IMAGE, winMain::OnFileOpenDiscFerretImageClick )
+
 	EVT_MENU( wxID_EXIT, winMain::OnEXITClick )
 
 	EVT_MENU( wxID_ABOUT, winMain::OnHelpAbout )
@@ -198,12 +200,13 @@ void winMain::CreateControls()
 	wxMenu* itemMenu17 = new wxMenu;
 	wxMenu* itemMenu18 = new wxMenu;
 	itemMenu18->Append(ID_FILEOPEN_CATWEASEL_IMG, _("Catweasel &IMG"), wxEmptyString, wxITEM_NORMAL);
+	itemMenu18->Append(ID_FILEOPEN_DISCFERRET_IMAGE, _("&DiscFerret Image (.DFI)"), wxEmptyString, wxITEM_NORMAL);
 	itemMenu17->Append(wxID_ANY, _("&Open"), itemMenu18);
 	itemMenu17->Append(wxID_EXIT, _("E&xit"), wxEmptyString, wxITEM_NORMAL);
 	menuBar->Append(itemMenu17, _("&File"));
-	wxMenu* itemMenu21 = new wxMenu;
-	itemMenu21->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
-	menuBar->Append(itemMenu21, _("&Help"));
+	wxMenu* itemMenu22 = new wxMenu;
+	itemMenu22->Append(wxID_ABOUT, _("&About"), wxEmptyString, wxITEM_NORMAL);
+	menuBar->Append(itemMenu22, _("&Help"));
 	itemFrame1->SetMenuBar(menuBar);
 
 	wxSplitterWindow* itemSplitterWindow2 = new wxSplitterWindow( itemFrame1, wxID_ANY, wxDefaultPosition, wxSize(100, 100), wxSP_3DBORDER|wxSP_3DSASH|wxSP_LIVE_UPDATE );
@@ -607,10 +610,11 @@ void winMain::UpdateGraphs(void)
 }
 
 
-/*
- * wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_CATWEASEL_IMG
+/**
+ * Load a Catweasel image file (.IMG), format defined by Chuck Guzis.
+ *
+ * Handles the wxEVT_COMMAND_MENU_SELECTED for ID_FILEOPEN_CATWEASEL_IMG.
  */
-
 void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 {
 	ifstream file;
@@ -708,6 +712,193 @@ void winMain::OnFileOpenCatweaselIMGClick( wxCommandEvent& event )
 		st << OpenDialog->GetFilename();
 		st << wxT("': ");
 		st << _("Payload length extends past EOF");
+		wxMessageBox(
+				st,
+				_("File read error"),
+				wxICON_ERROR | wxOK,
+				this);
+
+		success = false;
+	}
+
+	if (!success) {
+		// Something rotten in Denmark. Clear the trackdata buffer and remove the
+		// filename from the title bar.
+		trackData.clear();
+		SetTitle(wxString(wxT("Merlin")));
+	} else {
+		// Set the window title to reflect the file open
+		SetTitle(wxString(wxT("Merlin - ")) << OpenDialog->GetFilename());
+	}
+
+	// Update the track list box and select the first track
+	UpdateTrackList();
+
+	// Clean up after ourselves
+	OpenDialog->Destroy();
+}
+
+
+/// A generic exception which returns a wxString -- we can extend this later.
+class MyException {
+	public:
+		virtual const wxString what() throw() =0;
+};
+
+/// A generic exception with a fixed error message.
+#define XCPT(name, errorstr) \
+	class name : public MyException {											\
+		public:																	\
+			virtual const wxString what() throw() { return wxT(errorstr); }		\
+	}
+
+/// Bad Magic Number exception.
+XCPT(EBadMagic, "Bad magic number");
+/// Bad Payload Length exception.
+XCPT(EBadLength, "Payload length extends past EOF");
+
+/*
+ * wxEVT_COMMAND_MENU_SELECTED event handler for ID_FILEOPEN_DISCFERRET_IMAGE
+ */
+
+/**
+ * Load a DiscFerret image file (.DFI), created by FerretCAPTURE.
+ *
+ * Handles the wxEVT_COMMAND_MENU_SELECTED for ID_FILEOPEN_CATWEASEL_IMG.
+ */
+void winMain::OnFileOpenDiscFerretImageClick( wxCommandEvent& event )
+{
+	ifstream file;
+	bool success = true;
+
+	wxFileDialog* OpenDialog = new wxFileDialog(
+		this, _("Choose a file to open"), wxEmptyString, wxEmptyString, 
+		_("DiscFerret DFI files (*.dfi)|*.dfi|All files (*.*)|*.*"),
+		wxFD_OPEN, wxDefaultPosition);
+
+	if (OpenDialog->ShowModal() != wxID_OK) {
+		// User didn't click OK, bail out.
+		OpenDialog->Destroy();
+		return;
+	}
+
+	// If we reach this point, the user selected a file. Load it.
+	trackData.clear();
+	try {
+		uint8_t buf[16];
+		// File length
+		streampos filelen;
+
+		// Open the file
+		file.exceptions(ifstream::failbit | ifstream::badbit);
+		file.open(OpenDialog->GetPath().char_str(), ios::in | ios::binary);
+
+		// Get the file length
+		file.seekg (0, ios::end);
+		filelen = file.tellg();
+		file.seekg (0, ios::beg);
+
+		// Read the magic word
+		file.read((char *)buf, 4);
+		if ((buf[0] != 'D') ||
+				(buf[1] != 'F') ||
+				(buf[2] != 'E') ||
+				(buf[3] != 'R')) {
+			// Magic word not correct. Bail out.
+			throw EBadMagic();
+		}
+
+		while (file.tellg() < filelen) {
+			// Now read the tracks
+			uint16_t cyl, head, sec;
+			uint32_t plen;
+
+			// Read header block
+			file.read((char *)buf, 10);
+			cyl  = ((uint16_t)buf[0] << 8) + (uint16_t)buf[1];
+			head = ((uint16_t)buf[2] << 8) + (uint16_t)buf[3];
+			sec  = ((uint16_t)buf[4] << 8) + (uint16_t)buf[5];
+			plen = ((uint32_t)buf[6] << 24) +
+				((uint32_t)buf[7] << 16) +
+				((uint32_t)buf[8] << 8) +
+				(uint16_t)buf[9];
+			// Make sure the payload address is sane
+			if (plen > (filelen - file.tellg()))
+				throw exception();
+
+			// TODO: update status bar
+//			cout << "TRAK " << cyl << " " << head << " " << sec << " = " << plen << endl;
+
+			// read data into a buffer
+			uint8_t *tbuf = new uint8_t[plen];
+			file.read((char *)tbuf, plen);
+
+			// create a new track from the data we have
+			CTrack tk(cyl, head, sec);
+			// IMG files don't specify the acquisition rate. Assume 28.322MHz (the max for a Catweasel Mk.III/Mk.IV)
+			tk.freq(100e6l);
+
+			// DiscFerret data dumps contain the raw contents of the acquisition RAM.
+			// Briefly:
+			//   The Most Significant bit (0x80) means "index pulse active during this timeslot"
+			//   A 0x00 means the counter overflowed. Increment carry by 127.
+			//   Anything else is a timing value. T_val = carry + data_byte, then set the carry to zero.
+			uint32_t carry = 0;
+			for (streampos i=0; i<plen; i+=1) {
+				uint8_t d = tbuf[i] & 0x7f;
+				if (d == 0) {
+					carry += 127;
+				} else {
+					tk.data.push_back(carry + (uint32_t)d);
+					carry = 0;
+				}
+			}
+			if (carry != 0) tk.data.push_back(carry);
+
+			// Store track data
+			trackData.push_back(tk);
+
+			// Deallocate memory buffer
+			delete[] tbuf;
+		}
+
+		// File read complete; close the file
+		file.close();
+	} catch (ifstream::failure &e) {
+		// File read error. Let the user know what happened.
+		wxString st = _("An error occurred while reading the file '");
+		st << OpenDialog->GetFilename();
+		st << wxT("': ");
+
+		if ((file.rdstate() & ifstream::eofbit)) st << _("Unexpected end of file.");
+		else if ((file.rdstate() & ifstream::badbit)) st << _("Unknown file read error (disc error?).");
+		else st << _("Unknown error.");		// FIXME? can this happen?
+
+		wxMessageBox(
+				st,
+				_("File read error"),
+				wxICON_ERROR | wxOK,
+				this);
+
+		success = false;
+	} catch (MyException &e) {
+		wxString st = _("An error occurred while reading the file '");
+		st << OpenDialog->GetFilename();
+		st << wxT("': ");
+		st << e.what();
+		wxMessageBox(
+				st,
+				_("File read error"),
+				wxICON_ERROR | wxOK,
+				this);
+
+		success = false;
+	} catch (std::exception &e) {
+		wxString st = _("An error occurred while reading the file '");
+		st << OpenDialog->GetFilename();
+		st << wxT("': ");
+		wxString exwhat(e.what(), wxConvUTF8);
+		st << exwhat;
 		wxMessageBox(
 				st,
 				_("File read error"),

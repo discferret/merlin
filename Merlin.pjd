@@ -1096,6 +1096,28 @@
                   <string name="proxy-Bitmap unchecked">""</string>
                   <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
                 </document>
+                <document>
+                  <string name="title">"&amp;DiscFerret Image (.DFI): ID_FILEOPEN_DISCFERRET_IMAGE"</string>
+                  <string name="type">"dialog-control-document"</string>
+                  <string name="filename">""</string>
+                  <string name="icon-name">"menuitem"</string>
+                  <long name="is-transient">0</long>
+                  <long name="owns-file">1</long>
+                  <long name="title-mode">0</long>
+                  <long name="locked">0</long>
+                  <string name="proxy-type">"wbMenuItemProxy"</string>
+                  <string name="event-handler-0">"wxEVT_COMMAND_MENU_SELECTED|OnFileOpenDiscFerretImageClick|NONE||winMain"</string>
+                  <string name="proxy-Id name">"ID_FILEOPEN_DISCFERRET_IMAGE"</string>
+                  <long name="proxy-Id value">10002</long>
+                  <string name="proxy-Label">"&amp;DiscFerret Image (.DFI)"</string>
+                  <string name="proxy-Kind">"Normal"</string>
+                  <bool name="proxy-Checked">0</bool>
+                  <bool name="proxy-Enabled">1</bool>
+                  <string name="proxy-Help text">""</string>
+                  <string name="proxy-Bitmap">""</string>
+                  <string name="proxy-Bitmap unchecked">""</string>
+                  <string name="proxy-Platform">"&lt;Any platform&gt;"</string>
+                </document>
               </document>
               <document>
                 <string name="title">"E&amp;xit: wxID_EXIT"</string>
