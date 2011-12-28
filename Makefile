@@ -188,7 +188,7 @@ endif
 # Version info generation
 ####
 # get the current build number
-VER_BUILDNUM	= $(shell cat .buildnum)
+VER_BUILDNUM	= $(shell cat .buildnum||echo 0)
 
 #### --- begin Subversion revision grabber ---
 # there are two ways to get the SVN revision - use svnversion, or use svn info
