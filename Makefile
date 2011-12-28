@@ -118,7 +118,7 @@ TARGET		=	merlin
 SRC			=	MerlinApp.cpp winMain.cpp CTrack.cpp
 
 # wxfreechart sources --- find src/freechart -iname '*.cpp' |sed 's:^src/::' |sed ':a;N;$!ba;s/\n/ /g'
-SRC			+=	freechart/art.cpp freechart/axis/compdateaxis.cpp freechart/axis/labelaxis.cpp freechart/axis/axis.cpp freechart/axis/logarithmicnumberaxis.cpp freechart/axis/numberaxis.cpp freechart/axis/dateaxis.cpp freechart/axis/categoryaxis.cpp freechart/gantt/ganttsimpledataset.cpp freechart/gantt/ganttdataset.cpp freechart/gantt/ganttrenderer.cpp freechart/gantt/ganttplot.cpp freechart/plot.cpp freechart/marker.cpp freechart/legend.cpp freechart/chartpanel.cpp freechart/chartsplitpanel.cpp freechart/xy/xyhistorenderer.cpp freechart/xy/xysimpledataset.cpp freechart/xy/xydataset.cpp freechart/xy/xyrenderer.cpp freechart/xy/xylinerenderer.cpp freechart/xy/xyarearenderer.cpp freechart/xy/xyplot.cpp freechart/xy/functions/polynom.cpp freechart/xy/functions/sinefunction.cpp freechart/xy/vectordataset.cpp freechart/xy/xydynamicdataset.cpp freechart/chart.cpp freechart/colorscheme.cpp freechart/ohlc/ohlccandlestickrenderer.cpp freechart/ohlc/ohlcdataset.cpp freechart/ohlc/ohlcrenderer.cpp freechart/ohlc/ohlcplot.cpp freechart/ohlc/ohlcbarrenderer.cpp freechart/renderer.cpp freechart/multiplot.cpp freechart/bars/barplot.cpp freechart/bars/barrenderer.cpp freechart/dataset.cpp freechart/axisplot.cpp freechart/xyz/bubbleplot.cpp freechart/xyz/xyzrenderer.cpp freechart/xyz/xyzdataset.cpp freechart/symbol.cpp freechart/category/categorydataset.cpp freechart/category/categorysimpledataset.cpp freechart/areadraw.cpp freechart/pie/pieplot.cpp
+SRC			+=	freechart/art.cpp freechart/axis/compdateaxis.cpp freechart/axis/labelaxis.cpp freechart/axis/axis.cpp freechart/axis/logarithmicnumberaxis.cpp freechart/axis/numberaxis.cpp freechart/axis/dateaxis.cpp freechart/axis/categoryaxis.cpp freechart/gantt/ganttsimpledataset.cpp freechart/gantt/ganttdataset.cpp freechart/gantt/ganttrenderer.cpp freechart/gantt/ganttplot.cpp freechart/plot.cpp freechart/marker.cpp freechart/legend.cpp freechart/chartpanel.cpp freechart/xy/xyhistorenderer.cpp freechart/xy/xysimpledataset.cpp freechart/xy/xydataset.cpp freechart/xy/xyrenderer.cpp freechart/xy/xylinerenderer.cpp freechart/xy/xyarearenderer.cpp freechart/xy/xyplot.cpp freechart/xy/functions/polynom.cpp freechart/xy/functions/sinefunction.cpp freechart/xy/vectordataset.cpp freechart/xy/xydynamicdataset.cpp freechart/chart.cpp freechart/colorscheme.cpp freechart/ohlc/ohlccandlestickrenderer.cpp freechart/ohlc/ohlcdataset.cpp freechart/ohlc/ohlcrenderer.cpp freechart/ohlc/ohlcplot.cpp freechart/ohlc/ohlcbarrenderer.cpp freechart/renderer.cpp freechart/multiplot.cpp freechart/bars/barplot.cpp freechart/bars/barrenderer.cpp freechart/dataset.cpp freechart/axisplot.cpp freechart/xyz/bubbleplot.cpp freechart/xyz/xyzrenderer.cpp freechart/xyz/xyzdataset.cpp freechart/symbol.cpp freechart/category/categorydataset.cpp freechart/category/categorysimpledataset.cpp freechart/areadraw.cpp freechart/pie/pieplot.cpp
 
 # source type - either "c" or "cpp" (C or C++)
 SRC_TYPE	=	cpp
@@ -164,8 +164,8 @@ endif
 MAKE	=	make
 CC		=	gcc
 CXX		=	g++
-CFLAGS	=	-Wall -pedantic -std=gnu99 $(EXT_CFLAGS)
-CXXFLAGS=	-Wall -pedantic -std=gnu++0x $(EXT_CXXFLAGS)
+CFLAGS	=	-Wall $(EXT_CFLAGS)
+CXXFLAGS=	-Wall $(EXT_CXXFLAGS)
 LDFLAGS	=	$(EXT_LDFLAGS)
 RM		=	rm
 STRIP	=	strip

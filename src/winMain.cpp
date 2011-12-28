@@ -35,7 +35,7 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
-#include <cstdint>
+#include <stdint.h>
 
 #include "CTrack.h"
 #include "version.h"

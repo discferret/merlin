@@ -5,8 +5,8 @@
 #ifndef MERLIN_CTrack_h
 #define MERLIN_CTrack_h
 
-#include <cstdint>
 #include <vector>
+#include <stdint.h>
 
 class CTrack {
 	private:
@@ -21,11 +21,11 @@ class CTrack {
 
 	public:
 		// Iterator helpers for data store
-		typedef std::vector<std::uint32_t>::iterator data_iter;
-		typedef std::vector<std::uint32_t>::const_iterator data_citer;
+		typedef std::vector<uint32_t>::iterator data_iter;
+		typedef std::vector<uint32_t>::const_iterator data_citer;
 
 		/// Track data
-		std::vector<std::uint32_t> data;
+		std::vector<uint32_t> data;
 
 		const long cylinder() const	{ return cyl; };
 		const long head() const		{ return hd; };
