@@ -391,6 +391,21 @@ ifeq ($(BUILD_TYPE),release)
 	$(STRIP) $(TARGET)
 endif
 
+	#YourAppMacIcons.icns AnotherResource.txt ...
+	#osx/Info.plist osx/version.plist osx/InfoPlist.strings
+$(TARGET).app: $(TARGET)
+	-mkdir $@
+	-mkdir $@/Contents
+	-mkdir $@/Contents/MacOS
+	-mkdir $@/Contents/Resources
+	-mkdir $@/Contents/Resources/English.lproj
+	#cp osx/Info.plist $@/Contents/
+	#cp version.plist $@/Contents/
+	#cp InfoPlist.strings $@/Contents/Resources/English.lproj/
+	echo -n 'APPL????' > $@/Contents/PkgInfo
+	cp $(TARGET) $@/Contents/MacOS/$(TARGET)
+	#cp YourAppMacIcons.icns AnotherResource.txt YourApp.app/Contents/Resources/
+
 ###
 # extra rules
 # example:
