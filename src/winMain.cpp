@@ -446,32 +446,36 @@ void winMain::UpdateGraphs(void)
 		}
 	}
 
-	// Calculate the speedplot
-	// start by calculating multiplier and threshold values
-	double *mult = new double[peakpos.size()];
-	size_t x=0;
-	for (vector<int>::const_iterator i = peakpos.begin(); i != peakpos.end(); i++,x++) {
-		mult[x] = (((double)(*i)+1.0) / ((double)(peakpos[0])+1.0));
-	}
-
-	double *speedplotData = new double[t.data.size()*2];
-	size_t spdpos=0;
-	for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++,spdpos++) {
-		// find closest matching multiplier value
-		double minError = INFINITY;
-		size_t mePos = 0;
-		for (size_t x=0; x<peakpos.size(); x++) {
-			// error = (val - thr) / thr
-			double err = (((double)(*i)+1.0) - ((double)peakpos[x]+1.0)) / ((double)peakpos[x]+1.0);
-			if (fabs(err) < fabs(minError)) {
-				minError = err;
-				mePos = x;
-			}
+	double *mult;
+	double *speedplotData;
+	if (peakpos.size() > 1) {
+		// Calculate the speedplot
+		// start by calculating multiplier and threshold values
+		mult = new double[peakpos.size()];
+		size_t x=0;
+		for (vector<int>::const_iterator i = peakpos.begin(); i != peakpos.end(); i++,x++) {
+			mult[x] = (((double)(*i)+1.0) / ((double)(peakpos[0])+1.0));
 		}
-		speedplotData[spdpos*2] = spdpos;
-		speedplotData[spdpos*2+1] = 0.0 - ((((double)(*i)+1.0) / ((double)peakpos[mePos]+1.0) * 100.0) - 100.0);
+
+		speedplotData = new double[t.data.size()*2];
+		size_t spdpos=0;
+		for (CTrack::data_citer i = t.data.begin(); i != t.data.end(); i++,spdpos++) {
+			// find closest matching multiplier value
+			double minError = INFINITY;
+			size_t mePos = 0;
+			for (size_t x=0; x<peakpos.size(); x++) {
+				// error = (val - thr) / thr
+				double err = (((double)(*i)+1.0) - ((double)peakpos[x]+1.0)) / ((double)peakpos[x]+1.0);
+				if (fabs(err) < fabs(minError)) {
+					minError = err;
+					mePos = x;
+				}
+			}
+			speedplotData[spdpos*2] = spdpos;
+			speedplotData[spdpos*2+1] = 0.0 - ((((double)(*i)+1.0) / ((double)peakpos[mePos]+1.0) * 100.0) - 100.0);
+		}
+		delete mult;
 	}
-	delete mult;
 
 	// Delete any existing charts in the sizers
 	if (histogramSizer->GetChildren().GetCount() > 0)
@@ -571,42 +575,45 @@ void winMain::UpdateGraphs(void)
 	scatterSizer->Add(SchartPanel, 1, wxGROW | wxALL, 5);
 	scatterSizer->Layout();
 
-	// create histogram plot
-	// TODO: add tooltip to display current X/Y position
-	XYPlot *SPplot = new XYPlot();
-	// create dataset
-	XYSimpleDataset *SPdataset = new XYSimpleDataset();
-	// add series to dataset and set up the renderer
-	SPdataset->AddSerie(speedplotData, t.data.size());
-	SPdataset->SetRenderer(new XYLineRenderer());
-	// create number axes on left and bottom
-	NumberAxis *SPleftAxis = new NumberAxis(AXIS_LEFT);
-	NumberAxis *SPbottomAxis = new NumberAxis(AXIS_BOTTOM);
-	SPbottomAxis->SetLabelCount(20);
-	SPbottomAxis->SetTickFormat(wxT("%0.0f"));
-	SPleftAxis->SetTitle(_("Deviation (%)"));
-	SPbottomAxis->SetTitle(_("Sample offset"));
-	SPleftAxis->SetLabelCount(11);
-	SPleftAxis->SetFixedBounds(-100.0, 100.0);
-	// put it all together
-	SPplot->AddDataset(SPdataset);
-	SPplot->AddAxis(SPleftAxis);
-	SPplot->AddAxis(SPbottomAxis);
-	// link data with axis
-	SPplot->LinkDataVerticalAxis(0,0);
-	SPplot->LinkDataHorizontalAxis(0,0);
-	// create the speed chart and link it to a chart panel
-	Chart *SPchart = new Chart(SPplot);
-	// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
-	wxChartPanel *SPchartPanel = new wxChartPanel(speedPanel, wxID_ANY, SPchart, wxPoint(0, 0), wxSize(1, 1));
-//	SPchartPanel->SetAntialias(true);
-	speedSizer->Clear();
-	speedSizer->Add(SPchartPanel, 1, wxGROW | wxALL, 5);
-	speedSizer->Layout();
+	if (peakpos.size() > 1) {
+		// create speedplot
+		// TODO: add tooltip to display current X/Y position
+		XYPlot *SPplot = new XYPlot();
+		// create dataset
+		XYSimpleDataset *SPdataset = new XYSimpleDataset();
+		// add series to dataset and set up the renderer
+		SPdataset->AddSerie(speedplotData, t.data.size());
+		SPdataset->SetRenderer(new XYLineRenderer());
+		// create number axes on left and bottom
+		NumberAxis *SPleftAxis = new NumberAxis(AXIS_LEFT);
+		NumberAxis *SPbottomAxis = new NumberAxis(AXIS_BOTTOM);
+		SPbottomAxis->SetLabelCount(20);
+		SPbottomAxis->SetTickFormat(wxT("%0.0f"));
+		SPleftAxis->SetTitle(_("Deviation (%)"));
+		SPbottomAxis->SetTitle(_("Sample offset"));
+		SPleftAxis->SetLabelCount(11);
+		SPleftAxis->SetFixedBounds(-100.0, 100.0);
+		// put it all together
+		SPplot->AddDataset(SPdataset);
+		SPplot->AddAxis(SPleftAxis);
+		SPplot->AddAxis(SPbottomAxis);
+		// link data with axis
+		SPplot->LinkDataVerticalAxis(0,0);
+		SPplot->LinkDataHorizontalAxis(0,0);
+		// create the speed chart and link it to a chart panel
+		Chart *SPchart = new Chart(SPplot);
+		// using wxDefaultPosition and wxDefaultSize makes Bad Things Happen!
+		wxChartPanel *SPchartPanel = new wxChartPanel(speedPanel, wxID_ANY, SPchart, wxPoint(0, 0), wxSize(1, 1));
+	//	SPchartPanel->SetAntialias(true);
+		speedSizer->Clear();
+		speedSizer->Add(SPchartPanel, 1, wxGROW | wxALL, 5);
+		speedSizer->Layout();
+
+		delete[] speedplotData;
+	}
 
 	delete[] histData;
 	delete[] scatterData;
-	delete[] speedplotData;
 }
 
 
