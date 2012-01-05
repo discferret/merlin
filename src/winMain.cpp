@@ -6,7 +6,7 @@
 // Created:     Mon 25 Apr 2011 03:23:29 BST
 // RCS-ID:      
 // Copyright:   (C) 2011 Philip Pemberton
-// Licence:     
+// Licence:     GNU GPL v2 or later
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
