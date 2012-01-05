@@ -2,9 +2,7 @@
 // Name:        MerlinApp.cpp
 // Purpose:     
 // Author:      Philip Pemberton
-// Modified by: 
 // Created:     Mon 25 Apr 2011 03:22:31 BST
-// RCS-ID:      
 // Copyright:   (C) 2011 Philip Pemberton
 // Licence:     GNU GPL v2 or later
 /////////////////////////////////////////////////////////////////////////////
