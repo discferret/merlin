@@ -448,7 +448,7 @@ void winMain::UpdateGraphs(void)
 
 	double *mult;
 	double *speedplotData;
-	if (peakpos.size() > 1) {
+	if (peakpos.size() > 0) {
 		// Calculate the speedplot
 		// start by calculating multiplier and threshold values
 		mult = new double[peakpos.size()];
