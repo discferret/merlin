@@ -853,7 +853,7 @@ void winMain::OnFileOpenDiscFerretImageClick( wxCommandEvent& event )
 			uint32_t carry = 0;
 			for (streampos i=0; i<plen; i+=1) {
 				uint8_t d = tbuf[i] & 0x7f;
-				if (d == 0) {
+				if (d == 0x7f) {
 					carry += 127;
 				} else {
 					tk.data.push_back(carry + (uint32_t)d);
