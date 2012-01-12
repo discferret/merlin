@@ -414,13 +414,24 @@ void winMain::UpdateGraphs(void)
 
 	// Find peaks
 	// This is a C implementation of Eli Billauer's PEAKDET algorithm
+	// Modified to me logarithmically sensing and auto-adjusting by Phil Pemberton
 	vector<int> peakpos;
 	double mx = -INFINITY, mn = INFINITY;
 	int mxpos, mnpos;
 	bool lookformax = true;
-	double delta = 1000;
+	double delta = 0;
+
+	// first scan -- find highest peak
+	delta = 0;
 	for (size_t i=0; i<maxval; i++) {
-		double cur = histData[i*2+1];
+		if (histData[i*2+1] > delta)
+			delta = histData[i*2+1];
+	}
+	// delta = 33% of log1p(peak)
+	delta = log1p(delta) * 0.33;
+
+	for (size_t i=0; i<maxval; i++) {
+		double cur = log1p(histData[i*2+1]);
 		if (cur > mx) {
 			mx = cur;
 			mxpos = i;
